@@ -19,16 +19,18 @@ export class Move {
   }
 
   async init() {
-    const imagePromises = [];
     for (let i = 0; i < this.totalSteps; i++) {
-      [ORIENTATIONS.LEFT, ORIENTATIONS.RIGHT].forEach(orientation => {
-        const img = new Image();
-        img.src = `./images/fighters/${this.owner.name}/${orientation}/${this.type}/${i}.png`;
-        this.imagesBySteps[orientation].push(img);
-        imagePromises.push(new Promise(resolve => img.onload = resolve));
-      });
+      const img = new Image();
+      img.src = `./images/fighters/${this.owner.name}/${ORIENTATIONS.LEFT}/${this.type}/${i}.png`;
+      this.imagesBySteps[ORIENTATIONS.LEFT][i] = img;
+      await new Promise(resolve => img.onload = resolve);
     }
-    await Promise.all(imagePromises);
+    for (let i = 0; i < this.totalSteps; i++) {
+      const img = new Image();
+      img.src = `./images/fighters/${this.owner.name}/${ORIENTATIONS.RIGHT}/${this.type}/${i}.png`;
+      this.imagesBySteps[ORIENTATIONS.RIGHT][i] = img;
+      await new Promise(resolve => img.onload = resolve);
+    }
   }
 
   start(step = 0) {
