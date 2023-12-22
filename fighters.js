@@ -85,11 +85,10 @@ export class Fighter {
     this.moves[MOVE_TYPES.FORWARD_JUMP] = new ForwardJump(this);
     this.moves[MOVE_TYPES.BACKWARD_JUMP] = new BackwardJump(this);
 
-    const initMoves = [];
-    Object.values(this.moves).forEach(move => {
-      initMoves.push(move.init());
-    });
-    await Promise.all(initMoves);
+    for (const move of Object.values(this.moves)) {
+      await move.init();
+    }
+
     this.setMove(MOVE_TYPES.STAND);
   }
 
