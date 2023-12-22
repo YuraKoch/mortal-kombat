@@ -19,24 +19,22 @@ export class Move {
   }
 
   async init() {
-    let imagePromises = [];
-    for (let i = 0; i < this.totalSteps; i++) {
-      const img = new Image();
-      img.src = `./images/fighters/${this.owner.name}/${ORIENTATIONS.LEFT}/${this.type}/${i}.png`;
-      this.imagesBySteps[ORIENTATIONS.LEFT][i] = img;
-      imagePromises.push(new Promise(resolve => img.onload = resolve));
-    }
-    await Promise.all(imagePromises);
-
-    imagePromises = [];
-    for (let i = 0; i < this.totalSteps; i++) {
-      const img = new Image();
-      img.src = `./images/fighters/${this.owner.name}/${ORIENTATIONS.RIGHT}/${this.type}/${i}.png`;
-      this.imagesBySteps[ORIENTATIONS.RIGHT][i] = img;
-      imagePromises.push(new Promise(resolve => img.onload = resolve));
-    }
-    await Promise.all(imagePromises);
+    await this.loadImages(ORIENTATIONS.LEFT);
+    await this.loadImages(ORIENTATIONS.RIGHT);
   }
+
+  async loadImages(orientation) {
+    const imagePromises = [];
+
+    for (let i = 0; i < this.totalSteps; i++) {
+      const img = new Image();
+      img.src = `./images/fighters/${this.owner.name}/${orientation}/${this.type}/${i}.png`;
+      this.imagesBySteps[orientation][i] = img;
+      imagePromises.push(new Promise(resolve => img.onload = resolve));
+    }
+
+    await Promise.all(imagePromises);
+  };
 
   start(step = 0) {
     this.owner.lock();
