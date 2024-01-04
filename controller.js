@@ -96,8 +96,8 @@ export class Game {
 
   drawFighter(fighter) {
     const x = fighter.orientation === ORIENTATIONS.LEFT ?
-      fighter.x - fighter.width / 2 - 10 :
-      fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width + 10;
+      fighter.x - fighter.width / 2 :
+      fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width;
     const y = fighter.y - fighter.currentImg.height;
     this.context.drawImage(fighter.currentImg, x, y);
   }

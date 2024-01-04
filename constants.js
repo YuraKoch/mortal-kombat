@@ -1,5 +1,5 @@
 export const PLAYER_BOTTOM = 360;
-export const PLAYER_WIDTH = 50;
+export const PLAYER_WIDTH = 60;
 export const PLAYER_HEIGHT = 130;
 
 export const MOVE_TYPES = {
