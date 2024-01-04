@@ -1,5 +1,10 @@
-import { ARENA, MOVE_TYPES, ORIENTATIONS } from "./constants.js";
+import { MOVE_TYPES, ORIENTATIONS } from "./constants.js";
 import { Fighter } from "./fighters.js";
+
+const ARENA = {
+  WIDTH: 600,
+  HEIGHT: 400
+};
 
 const FIGHTERS = ['subzero', 'kano'];
 
@@ -99,7 +104,7 @@ export class Game {
 
   checkFighterAttack(fighter, opponent) {
     if (fighter.damage > 0 && this.checkDistanceForAttack(fighter, opponent)) {
-      opponent.endureAttack(fighter.damage, fighter.getMoveType());
+      opponent.endureAttack(fighter.damage, fighter.moveType);
       fighter.damage = 0;
       this.updateLifebars();
     }
@@ -117,7 +122,7 @@ export class Game {
   }
 
   checkFighterLife(fighter, opponent) {
-    if (fighter.life === 0 && fighter.getMoveType() !== MOVE_TYPES.FALL) {
+    if (fighter.life === 0 && fighter.moveType !== MOVE_TYPES.FALL) {
       opponent.currentMove.stop();
       opponent.setMove(MOVE_TYPES.WIN);
       fighter.unlock();
@@ -194,7 +199,7 @@ export class Game {
     const fighter = this.fighters[playerIndex];
     const orientation = fighter.orientation;
     const keys = KEYS[playerIndex];
-    const currentFighterMove = fighter.getMoveType();
+    const currentFighterMove = fighter.moveType;
 
     if (this.pressed[keys.HK] && currentFighterMove === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_KICK;
     if (this.pressed[keys.HK] && currentFighterMove === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_KICK;

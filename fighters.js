@@ -1,4 +1,4 @@
-import { ARENA, MOVE_TYPES, ORIENTATIONS, PLAYER_BOTTOM, PLAYER_HEIGHT, PLAYER_WIDTH } from "./constants.js";
+import { MOVE_TYPES, ORIENTATIONS, PLAYER_BOTTOM, PLAYER_HEIGHT, PLAYER_WIDTH } from "./constants.js";
 import {
   Stand,
   Walk,
@@ -123,9 +123,9 @@ export class Fighter {
   }
 
   endureAttack(damage, attackType) {
-    if (this.getMoveType() === MOVE_TYPES.BLOCK) {
+    if (this.moveType === MOVE_TYPES.BLOCK) {
       damage *= BLOCK_DAMAGE;
-    } else if (this.getMoveType() === MOVE_TYPES.SQUAT) {
+    } else if (this.moveType === MOVE_TYPES.SQUAT) {
       this.unlock();
       this.setMove(MOVE_TYPES.SQUAT_ENDURE);
     } else if (attackType === MOVE_TYPES.UPPERCUT || attackType === MOVE_TYPES.SPIN_KICK) {
@@ -137,11 +137,6 @@ export class Fighter {
     }
 
     this.life = Math.max(this.life - damage, 0);
-  }
-
-  getBottom() {
-    const bottomY = this.currentImg.height + this.y;
-    return ARENA.HEIGHT - bottomY;
   }
 
   setMove(moveType, step = 0) {
@@ -167,7 +162,7 @@ export class Fighter {
     this.currentMove.start(step);
   }
 
-  getMoveType() {
+  get moveType() {
     return this.currentMove.type;
   }
 }

@@ -1,9 +1,3 @@
-export const ARENA = {
-  WIDTH: 600,
-  HEIGHT: 400
-};
-
-export const PLAYER_TOP = 230;
 export const PLAYER_BOTTOM = 360;
 export const PLAYER_WIDTH = 50;
 export const PLAYER_HEIGHT = 130;
