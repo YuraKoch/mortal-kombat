@@ -72,12 +72,9 @@ export class Game {
 
   refreshCanvas() {
     this.updateFightersHoldMove();
-    this.synchronizeFighter(this.fighters[0], this.fighters[1]);
-    this.synchronizeFighter(this.fighters[1], this.fighters[0]);
-    this.checkFighterAttack(this.fighters[0], this.fighters[1]);
-    this.checkFighterAttack(this.fighters[1], this.fighters[0]);
-    this.checkFighterLife(this.fighters[0], this.fighters[1]);
-    this.checkFighterLife(this.fighters[1], this.fighters[0]);
+    this.synchronizeFighters();
+    this.checkFightersAttack();
+    this.checkFightersLife();
 
     this.context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);
     this.drawFighter(this.fighters[0]);
@@ -102,6 +99,11 @@ export class Game {
     this.context.drawImage(fighter.currentImg, x, y);
   }
 
+  checkFightersAttack() {
+    this.checkFighterAttack(this.fighters[0], this.fighters[1]);
+    this.checkFighterAttack(this.fighters[1], this.fighters[0]);
+  }
+
   checkFighterAttack(fighter, opponent) {
     if (fighter.damage > 0 && this.checkDistanceForAttack(fighter, opponent)) {
       opponent.endureAttack(fighter.damage, fighter.moveType);
@@ -121,6 +123,11 @@ export class Game {
     document.getElementById(`player2Life`).style.width = this.fighters[1].life + '%';
   }
 
+  checkFightersLife() {
+    this.checkFighterLife(this.fighters[0], this.fighters[1]);
+    this.checkFighterLife(this.fighters[1], this.fighters[0]);
+  }
+
   checkFighterLife(fighter, opponent) {
     if (fighter.life === 0 && fighter.moveType !== MOVE_TYPES.FALL) {
       opponent.currentMove.stop();
@@ -128,6 +135,11 @@ export class Game {
       fighter.unlock();
       fighter.setMove(MOVE_TYPES.FALL);
     }
+  }
+
+  synchronizeFighters() {
+    this.synchronizeFighter(this.fighters[0], this.fighters[1]);
+    this.synchronizeFighter(this.fighters[1], this.fighters[0]);
   }
 
   synchronizeFighter(fighter, opponent) {
