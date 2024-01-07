@@ -3,6 +3,7 @@ import { Fighter } from "./fighters.js";
 import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
 import { runFightersAttackSystem } from "./systems/fighters-attack-system.js";
 import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
+import { runLifebarsSystem } from "./systems/lifebars-system.js";
 
 const KEYS = [
   {
@@ -71,7 +72,7 @@ export class Game {
     runFightersPositionAjustmentSystem(this.fighters[0], this.fighters[1]);
     runFightersAttackSystem(this.fighters[0], this.fighters[1]);
     runFightersLifeSystem(this.fighters[0], this.fighters[1]);
-    this.updateLifebars();
+    runLifebarsSystem(this.fighters[0], this.fighters[1]);
 
     this.context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);
     this.drawFighter(this.fighters[0]);
@@ -94,11 +95,6 @@ export class Game {
       fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width;
     const y = fighter.y - fighter.currentImg.height;
     this.context.drawImage(fighter.currentImg, x, y);
-  }
-
-  updateLifebars() {
-    document.getElementById(`player1Life`).style.width = this.fighters[0].life + '%';
-    document.getElementById(`player2Life`).style.width = this.fighters[1].life + '%';
   }
 
   checkFightersLife() {

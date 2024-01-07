@@ -1,6 +1,6 @@
 export function runFightersAttackSystem(fighter1, fighter2) {
   checkFighterAttack(fighter1, fighter2);
-  checkFighterAttack(fighter1, fighter2);
+  checkFighterAttack(fighter2, fighter1);
 }
 
 function checkFighterAttack(fighter, opponent) {
