@@ -35,8 +35,9 @@ export class Game {
 
   async init() {
     await this.initializeFighters();
-    this.initCanvas()
+    this.initCanvas();
     this.addHandlers();
+    this.animate();
   }
 
   async initializeFighters() {
@@ -51,7 +52,6 @@ export class Game {
     canvas.width = ARENA.WIDTH;
     canvas.height = ARENA.HEIGHT;
     this.context = canvas.getContext('2d');
-    this.redrawCanvas();
   }
 
   addHandlers() {
@@ -67,7 +67,7 @@ export class Game {
     });
   }
 
-  redrawCanvas() {
+  animate() {
     this.updateFightersHoldMove();
     runFightersPositionAjustmentSystem(this.fighters[0], this.fighters[1]);
     runFightersAttackSystem(this.fighters[0], this.fighters[1]);
@@ -86,7 +86,7 @@ export class Game {
     // this.fighters[0].damage && this.context.strokeRect(this.fighters[0].currentMove.damageX - this.fighters[0].currentMove.damageWidth / 2, this.fighters[0].currentMove.damageY - this.fighters[0].currentMove.damageHeight, this.fighters[0].currentMove.damageWidth, this.fighters[0].currentMove.damageHeight);
     // this.fighters[1].damage && this.context.strokeRect(this.fighters[1].currentMove.damageX - this.fighters[1].currentMove.damageWidth / 2, this.fighters[1].currentMove.damageY - this.fighters[1].currentMove.damageHeight, this.fighters[1].currentMove.damageWidth, this.fighters[1].currentMove.damageHeight);
 
-    requestAnimationFrame(() => this.redrawCanvas());
+    requestAnimationFrame(() => this.animate());
   }
 
   drawFighter(fighter) {
