@@ -6,6 +6,7 @@ export class Move {
     [ORIENTATIONS.RIGHT]: [],
   };
   currentStep = 0;
+  isContinue = false;
   interval;
   totalSteps;
 
@@ -37,7 +38,7 @@ export class Move {
   };
 
   start(step = 0) {
-    this.owner.lock();
+    this.isContinue = true;
     this.currentStep = step;
     this.step();
     this.interval = setInterval(() => this.step(), this.stepDuration);
@@ -63,7 +64,7 @@ export class Move {
 
   stop() {
     clearInterval(this.interval);
-    this.owner.unlock();
+    this.isContinue = false;
     this.owner.y = PLAYER_BOTTOM;
   }
 }
@@ -81,7 +82,6 @@ export class Stand extends Move {
     this.owner.height = PLAYER_HEIGHT;
     this.owner.y = PLAYER_BOTTOM;
     super.start();
-    this.owner.unlock();
   }
 
   calculateNextStep() {
@@ -101,7 +101,6 @@ export class Walk extends Move {
 
   start() {
     super.start();
-    this.owner.unlock();
   }
 
   action() {
@@ -125,7 +124,6 @@ export class WalkBackward extends Move {
 
   start() {
     super.start();
-    this.owner.unlock();
   }
 
   action() {
@@ -151,7 +149,6 @@ export class Squat extends Move {
   start(step) {
     this.owner.height = PLAYER_HEIGHT / 2;
     super.start(step);
-    this.owner.unlock();
   }
 
   calculateNextStep() {
@@ -187,7 +184,6 @@ export class Block extends Move {
 
   start(step) {
     super.start(step);
-    this.owner.unlock();
   }
 
   calculateNextStep() {
@@ -364,11 +360,6 @@ export class Fall extends Move {
     const delta = this.owner.width - this.owner.currentImg.width;
     this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
   }
-
-  stop() {
-    super.stop();
-    this.owner.lock();
-  }
 }
 
 export class Win extends Move {
@@ -390,10 +381,5 @@ export class Win extends Move {
   action() {
     const delta = this.owner.width / 2 - this.owner.currentImg.width / 2;
     this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
-  }
-
-  stop() {
-    super.stop();
-    this.owner.lock();
   }
 }

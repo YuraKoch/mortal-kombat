@@ -38,13 +38,16 @@ const START_X_POSITION = {
 }
 const BLOCK_DAMAGE = 0.2;
 
+const GAME_OVER_MOVE_TYPES = [MOVE_TYPES.WIN, MOVE_TYPES.FALL];
+const JUMP_ATTACK_MOVE_TYPES = [MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWARD_JUMP_KICK, MOVE_TYPES.FORWARD_JUMP_PUNCH, MOVE_TYPES.BACKWARD_JUMP_PUNCH];
+const INTERRUPTED_MOVE_TYPES = [MOVE_TYPES.STAND, MOVE_TYPES.WALK, MOVE_TYPES.WALK_BACKWARD, MOVE_TYPES.SQUAT, MOVE_TYPES.BLOCK];
+
 export class Fighter {
   currentImg;
   currentMove;
   life = 100;
   width = PLAYER_WIDTH;
   height = PLAYER_HEIGHT;
-  locked = false;
   damage = 0;
 
   constructor(name, orientation) {
@@ -114,55 +117,44 @@ export class Fighter {
     ].includes(this.currentMove.type);
   }
 
-  lock() {
-    this.locked = true;
-  }
-
-  unlock() {
-    this.locked = false;
-  }
-
   endureAttack(damage, attackType) {
     if (this.moveType === MOVE_TYPES.BLOCK) {
       damage *= BLOCK_DAMAGE;
     } else if (this.moveType === MOVE_TYPES.SQUAT) {
-      this.unlock();
       this.setMove(MOVE_TYPES.SQUAT_ENDURE);
     } else if (attackType === MOVE_TYPES.UPPERCUT || attackType === MOVE_TYPES.SPIN_KICK) {
-      this.unlock();
       this.setMove(MOVE_TYPES.KNOCK_DOWN);
     } else {
-      this.unlock();
       this.setMove(MOVE_TYPES.ENDURE);
     }
 
     this.life = Math.max(this.life - damage, 0);
   }
 
-  setMove(moveType, step = 0) {
-    if (!(moveType in this.moves)) return;
-    if (this.currentMove?.type === moveType) return;
+  setMove(newMoveType, step = 0) {
+    if (!(newMoveType in this.moves)) return;
+    if (this.moveType === newMoveType) return;
 
-    if ([MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWARD_JUMP_KICK, MOVE_TYPES.FORWARD_JUMP_PUNCH, MOVE_TYPES.BACKWARD_JUMP_PUNCH].includes(moveType)) {
+    if (GAME_OVER_MOVE_TYPES.includes(this.moveType)) return;
+
+    if (JUMP_ATTACK_MOVE_TYPES.includes(newMoveType)) {
       const jumpCurrentStep = this.currentMove.currentStep;
       const jumpTotalSteps = this.currentMove.totalSteps;
       const delta = this.currentMove.delta;
       this.currentMove.stop();
-      this.currentMove = this.moves[moveType];
+      this.currentMove = this.moves[newMoveType];
       this.currentMove.start(jumpCurrentStep, jumpTotalSteps, delta);
       return;
     }
 
-    if (this.locked) {
-      return;
-    }
+    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove?.isContinue) return;
 
     this.currentMove?.stop();
-    this.currentMove = this.moves[moveType];
+    this.currentMove = this.moves[newMoveType];
     this.currentMove.start(step);
   }
 
   get moveType() {
-    return this.currentMove.type;
+    return this.currentMove?.type;
   }
 }
