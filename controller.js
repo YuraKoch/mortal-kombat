@@ -1,6 +1,7 @@
 import { ARENA, MOVE_TYPES, ORIENTATIONS } from "./constants.js";
 import { Fighter } from "./fighters.js";
 import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
+import { runFightersAttackSystem } from "./systems/fighters-attack-system.js";
 import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
 
 const KEYS = [
@@ -68,7 +69,7 @@ export class Game {
   redrawCanvas() {
     this.updateFightersHoldMove();
     runFightersPositionAjustmentSystem(this.fighters[0], this.fighters[1]);
-    this.checkFightersAttack();
+    runFightersAttackSystem(this.fighters[0], this.fighters[1]);
     runFightersLifeSystem(this.fighters[0], this.fighters[1]);
     this.updateLifebars();
 
@@ -93,26 +94,6 @@ export class Game {
       fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width;
     const y = fighter.y - fighter.currentImg.height;
     this.context.drawImage(fighter.currentImg, x, y);
-  }
-
-  checkFightersAttack() {
-    this.checkFighterAttack(this.fighters[0], this.fighters[1]);
-    this.checkFighterAttack(this.fighters[1], this.fighters[0]);
-  }
-
-  checkFighterAttack(fighter, opponent) {
-    if (fighter.damage > 0 && this.checkDistanceForAttack(fighter, opponent)) {
-      opponent.endureAttack(fighter.damage, fighter.moveType);
-      fighter.damage = 0;
-    }
-  }
-
-  checkDistanceForAttack(fighter, opponent) {
-    const intersectX = Math.abs(opponent.x - fighter.currentMove.damageX) < (opponent.width + fighter.currentMove.damageWidth) / 2;
-    const opponentCentralY = opponent.y - opponent.height / 2;
-    const fighterCentralDamageY = fighter.currentMove.damageY - fighter.currentMove.damageHeight / 2;
-    const intersectY = Math.abs(opponentCentralY - fighterCentralDamageY) < (opponent.height + fighter.currentMove.damageHeight) / 2;
-    return intersectX && intersectY;
   }
 
   updateLifebars() {
