@@ -114,7 +114,7 @@ export class Walk extends Move {
   }
 }
 
-export class WalkBack extends Move {
+export class WalkBackward extends Move {
   constructor(owner) {
     super({
       owner: owner,
@@ -135,60 +135,6 @@ export class WalkBack extends Move {
   calculateNextStep() {
     this.currentStep += 1;
     this.currentStep = this.currentStep % this.totalSteps;
-  }
-}
-
-export class Fall extends Move {
-  constructor(owner) {
-    super({
-      owner,
-      type: MOVE_TYPES.FALL,
-      totalSteps: 7,
-      stepDuration: 100,
-      nextMoveType: MOVE_TYPES.FALL,
-    });
-  }
-
-  start() {
-    this.ownerX = this.owner.x;
-    super.start();
-  }
-
-  action() {
-    const delta = this.owner.width - this.owner.currentImg.width;
-    this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
-  }
-
-  stop() {
-    super.stop();
-    this.owner.lock();
-  }
-}
-
-export class Win extends Move {
-  constructor(owner) {
-    super({
-      owner,
-      type: MOVE_TYPES.WIN,
-      totalSteps: 10,
-      stepDuration: 100,
-      nextMoveType: MOVE_TYPES.WIN,
-    });
-  }
-
-  start() {
-    this.ownerX = this.owner.x;
-    super.start();
-  }
-
-  action() {
-    const delta = this.owner.width / 2 - this.owner.currentImg.width / 2;
-    this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
-  }
-
-  stop() {
-    super.stop();
-    this.owner.lock();
   }
 }
 
@@ -246,63 +192,6 @@ export class Block extends Move {
 
   calculateNextStep() {
     this.currentStep += 1;
-  }
-}
-
-export class AttractiveStandUp extends Move {
-  constructor(owner) {
-    super({
-      owner,
-      type: MOVE_TYPES.ATTRACTIVE_STAND_UP,
-      totalSteps: 4,
-      stepDuration: 100,
-    });
-  }
-
-  start() {
-    this.owner.height = PLAYER_HEIGHT;
-    super.start();
-  }
-}
-
-export class Endure extends Move {
-  constructor(owner) {
-    super({
-      owner,
-      type: MOVE_TYPES.ENDURE,
-      totalSteps: 3,
-    });
-  }
-}
-
-export class KnockDown extends Move {
-  constructor(owner) {
-    super({
-      owner,
-      type: MOVE_TYPES.KNOCK_DOWN,
-      totalSteps: 10,
-      nextMoveType: MOVE_TYPES.ATTRACTIVE_STAND_UP,
-    });
-  }
-
-  action() {
-    if (this.owner.orientation === ORIENTATIONS.LEFT) {
-      this.owner.x -= 20;
-    } else {
-      this.owner.x += 20;
-    }
-  }
-}
-
-export class SquatEndure extends Move {
-  constructor(owner) {
-    super({
-      owner,
-      type: MOVE_TYPES.SQUAT_ENDURE,
-      totalSteps: 3,
-      nextMoveType: MOVE_TYPES.SQUAT,
-      nextMoveStep: 2,
-    });
   }
 }
 
@@ -395,5 +284,116 @@ export class BackwardJump extends Move {
 
     this.owner.x -= 23;
     this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
+  }
+}
+
+export class Endure extends Move {
+  constructor(owner) {
+    super({
+      owner,
+      type: MOVE_TYPES.ENDURE,
+      totalSteps: 3,
+    });
+  }
+}
+
+export class SquatEndure extends Move {
+  constructor(owner) {
+    super({
+      owner,
+      type: MOVE_TYPES.SQUAT_ENDURE,
+      totalSteps: 3,
+      nextMoveType: MOVE_TYPES.SQUAT,
+      nextMoveStep: 2,
+    });
+  }
+}
+
+export class KnockDown extends Move {
+  constructor(owner) {
+    super({
+      owner,
+      type: MOVE_TYPES.KNOCK_DOWN,
+      totalSteps: 10,
+      nextMoveType: MOVE_TYPES.ATTRACTIVE_STAND_UP,
+    });
+  }
+
+  action() {
+    if (this.owner.orientation === ORIENTATIONS.LEFT) {
+      this.owner.x -= 20;
+    } else {
+      this.owner.x += 20;
+    }
+  }
+}
+
+export class AttractiveStandUp extends Move {
+  constructor(owner) {
+    super({
+      owner,
+      type: MOVE_TYPES.ATTRACTIVE_STAND_UP,
+      totalSteps: 4,
+      stepDuration: 100,
+    });
+  }
+
+  start() {
+    this.owner.height = PLAYER_HEIGHT;
+    super.start();
+  }
+}
+
+export class Fall extends Move {
+  constructor(owner) {
+    super({
+      owner,
+      type: MOVE_TYPES.FALL,
+      totalSteps: 7,
+      stepDuration: 100,
+      nextMoveType: MOVE_TYPES.FALL,
+    });
+  }
+
+  start() {
+    this.ownerX = this.owner.x;
+    super.start();
+  }
+
+  action() {
+    const delta = this.owner.width - this.owner.currentImg.width;
+    this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
+  }
+
+  stop() {
+    super.stop();
+    this.owner.lock();
+  }
+}
+
+export class Win extends Move {
+  constructor(owner) {
+    super({
+      owner,
+      type: MOVE_TYPES.WIN,
+      totalSteps: 10,
+      stepDuration: 100,
+      nextMoveType: MOVE_TYPES.WIN,
+    });
+  }
+
+  start() {
+    this.ownerX = this.owner.x;
+    super.start();
+  }
+
+  action() {
+    const delta = this.owner.width / 2 - this.owner.currentImg.width / 2;
+    this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
+  }
+
+  stop() {
+    super.stop();
+    this.owner.lock();
   }
 }

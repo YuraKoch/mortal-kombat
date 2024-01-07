@@ -2,19 +2,19 @@ import { MOVE_TYPES, ORIENTATIONS, PLAYER_BOTTOM, PLAYER_HEIGHT, PLAYER_WIDTH } 
 import {
   Stand,
   Walk,
-  WalkBack,
-  Fall,
-  Win,
+  WalkBackward,
   Squat,
-  Block,
   StandUp,
-  AttractiveStandUp,
-  Endure,
-  KnockDown,
-  SquatEndure,
+  Block,
   Jump,
   ForwardJump,
   BackwardJump,
+  Endure,
+  SquatEndure,
+  KnockDown,
+  AttractiveStandUp,
+  Fall,
+  Win,
 } from "./moves.js";
 import {
   HighKick,
@@ -51,39 +51,39 @@ export class Fighter {
     this.name = name;
     this.orientation = orientation;
     this.x = START_X_POSITION[orientation]; // center of player
-    this.y = PLAYER_BOTTOM; // bottom s
+    this.y = PLAYER_BOTTOM;
   }
 
   async init() {
     this.moves = {};
     this.moves[MOVE_TYPES.STAND] = new Stand(this);
     this.moves[MOVE_TYPES.WALK] = new Walk(this);
-    this.moves[MOVE_TYPES.WALK_BACKWARD] = new WalkBack(this);
+    this.moves[MOVE_TYPES.WALK_BACKWARD] = new WalkBackward(this);
     this.moves[MOVE_TYPES.SQUAT] = new Squat(this);
-    this.moves[MOVE_TYPES.BLOCK] = new Block(this);
     this.moves[MOVE_TYPES.STAND_UP] = new StandUp(this);
-    this.moves[MOVE_TYPES.ATTRACTIVE_STAND_UP] = new AttractiveStandUp(this);
+    this.moves[MOVE_TYPES.BLOCK] = new Block(this);
+    this.moves[MOVE_TYPES.JUMP] = new Jump(this);
+    this.moves[MOVE_TYPES.FORWARD_JUMP] = new ForwardJump(this);
+    this.moves[MOVE_TYPES.BACKWARD_JUMP] = new BackwardJump(this);
     this.moves[MOVE_TYPES.HIGH_KICK] = new HighKick(this);
     this.moves[MOVE_TYPES.LOW_KICK] = new LowKick(this);
     this.moves[MOVE_TYPES.HIGH_PUNCH] = new HighPunch(this);
     this.moves[MOVE_TYPES.LOW_PUNCH] = new LowPunch(this);
-    this.moves[MOVE_TYPES.UPPERCUT] = new Uppercut(this);
     this.moves[MOVE_TYPES.SQUAT_LOW_KICK] = new SquatLowKick(this);
     this.moves[MOVE_TYPES.SQUAT_HIGH_KICK] = new SquatHighKick(this);
     this.moves[MOVE_TYPES.SQUAT_LOW_PUNCH] = new SquatLowPunch(this);
+    this.moves[MOVE_TYPES.ENDURE] = new Endure(this);
+    this.moves[MOVE_TYPES.SQUAT_ENDURE] = new SquatEndure(this);
+    this.moves[MOVE_TYPES.UPPERCUT] = new Uppercut(this);
     this.moves[MOVE_TYPES.SPIN_KICK] = new SpinKick(this);
-    this.moves[MOVE_TYPES.FALL] = new Fall(this);
     this.moves[MOVE_TYPES.KNOCK_DOWN] = new KnockDown(this);
-    this.moves[MOVE_TYPES.WIN] = new Win(this);
-    this.moves[MOVE_TYPES.JUMP] = new Jump(this);
+    this.moves[MOVE_TYPES.ATTRACTIVE_STAND_UP] = new AttractiveStandUp(this);
     this.moves[MOVE_TYPES.FORWARD_JUMP_KICK] = new ForwardJumpKick(this);
     this.moves[MOVE_TYPES.BACKWARD_JUMP_KICK] = new BackwardJumpKick(this);
     this.moves[MOVE_TYPES.FORWARD_JUMP_PUNCH] = new ForwardJumpPunch(this);
     this.moves[MOVE_TYPES.BACKWARD_JUMP_PUNCH] = new BackwardJumpPunch(this);
-    this.moves[MOVE_TYPES.ENDURE] = new Endure(this);
-    this.moves[MOVE_TYPES.SQUAT_ENDURE] = new SquatEndure(this);
-    this.moves[MOVE_TYPES.FORWARD_JUMP] = new ForwardJump(this);
-    this.moves[MOVE_TYPES.BACKWARD_JUMP] = new BackwardJump(this);
+    this.moves[MOVE_TYPES.FALL] = new Fall(this);
+    this.moves[MOVE_TYPES.WIN] = new Win(this);
 
     for (const move of Object.values(this.moves)) {
       await move.init();
