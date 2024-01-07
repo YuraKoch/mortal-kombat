@@ -2,6 +2,11 @@ export const PLAYER_BOTTOM = 360;
 export const PLAYER_WIDTH = 60;
 export const PLAYER_HEIGHT = 130;
 
+export const ARENA = {
+  WIDTH: 600,
+  HEIGHT: 400
+};
+
 export const MOVE_TYPES = {
   STAND: 'stand',
   WALK: 'walking',

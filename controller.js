@@ -1,12 +1,6 @@
-import { MOVE_TYPES, ORIENTATIONS } from "./constants.js";
+import { ARENA, MOVE_TYPES, ORIENTATIONS } from "./constants.js";
 import { Fighter } from "./fighters.js";
-
-const ARENA = {
-  WIDTH: 600,
-  HEIGHT: 400
-};
-
-const FIGHTERS = ['subzero', 'kano'];
+import { adjustFightersPosition } from "./systems/ajust-fighters-position-system.js";
 
 const KEYS = [
   {
@@ -44,8 +38,8 @@ export class Game {
 
   async initializeFighters() {
     this.fighters = [];
-    this.fighters[0] = new Fighter(FIGHTERS[0], ORIENTATIONS.LEFT);
-    this.fighters[1] = new Fighter(FIGHTERS[1], ORIENTATIONS.RIGHT);
+    this.fighters[0] = new Fighter('subzero', ORIENTATIONS.LEFT);
+    this.fighters[1] = new Fighter('kano', ORIENTATIONS.RIGHT);
     await Promise.all([this.fighters[0].init(), this.fighters[1].init()]);
   }
 
@@ -54,7 +48,7 @@ export class Game {
     canvas.width = ARENA.WIDTH;
     canvas.height = ARENA.HEIGHT;
     this.context = canvas.getContext('2d');
-    this.refreshCanvas();
+    this.redrawCanvas();
   }
 
   addHandlers() {
@@ -70,11 +64,12 @@ export class Game {
     });
   }
 
-  refreshCanvas() {
+  redrawCanvas() {
     this.updateFightersHoldMove();
-    this.adjustFightersPosition();
+    adjustFightersPosition(this.fighters[0], this.fighters[1]);
     this.checkFightersAttack();
     this.checkFightersLife();
+    this.updateLifebars();
 
     this.context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);
     this.drawFighter(this.fighters[0]);
@@ -88,7 +83,7 @@ export class Game {
     // this.fighters[0].damage && this.context.strokeRect(this.fighters[0].currentMove.damageX - this.fighters[0].currentMove.damageWidth / 2, this.fighters[0].currentMove.damageY - this.fighters[0].currentMove.damageHeight, this.fighters[0].currentMove.damageWidth, this.fighters[0].currentMove.damageHeight);
     // this.fighters[1].damage && this.context.strokeRect(this.fighters[1].currentMove.damageX - this.fighters[1].currentMove.damageWidth / 2, this.fighters[1].currentMove.damageY - this.fighters[1].currentMove.damageHeight, this.fighters[1].currentMove.damageWidth, this.fighters[1].currentMove.damageHeight);
 
-    requestAnimationFrame(() => this.refreshCanvas());
+    requestAnimationFrame(() => this.redrawCanvas());
   }
 
   drawFighter(fighter) {
@@ -108,7 +103,6 @@ export class Game {
     if (fighter.damage > 0 && this.checkDistanceForAttack(fighter, opponent)) {
       opponent.endureAttack(fighter.damage, fighter.moveType);
       fighter.damage = 0;
-      this.updateLifebars();
     }
   }
 
@@ -136,66 +130,6 @@ export class Game {
       opponent.setMove(MOVE_TYPES.WIN);
       fighter.unlock();
       fighter.setMove(MOVE_TYPES.FALL);
-    }
-  }
-
-  adjustFightersPosition() {
-    this.adjustFighterPosition(this.fighters[0], this.fighters[1]);
-    this.adjustFighterPosition(this.fighters[1], this.fighters[0]);
-  }
-
-  adjustFighterPosition(fighter, opponent) {
-    if (fighter.x <= fighter.width / 2) {
-      fighter.x = fighter.width / 2;
-      return;
-    }
-
-    if (fighter.x >= ARENA.WIDTH - fighter.width / 2) {
-      fighter.x = ARENA.WIDTH - fighter.width / 2;
-      return;
-    }
-
-    if (fighter.isJumping() && !opponent.isJumping() || opponent.isJumping() && !fighter.isJumping()) {
-      this.setFightersOrientation();
-      return;
-    }
-
-    const haveXCollision = Math.abs(opponent.x - fighter.x) < (opponent.width + fighter.width) / 2;
-    if (!haveXCollision) return;
-
-    if (!fighter.isMoving() && opponent.isMoving()) return;
-
-    if (fighter.isMoving() && !opponent.isMoving() && fighter.orientation === ORIENTATIONS.LEFT) {
-      fighter.x = opponent.x - (opponent.width + fighter.width) / 2;
-      return;
-    }
-
-    if (fighter.isMoving() && !opponent.isMoving() && fighter.orientation === ORIENTATIONS.RIGHT) {
-      fighter.x = opponent.x + (opponent.width + fighter.width) / 2;
-      return;
-    }
-
-    const collisionWidth = (opponent.width + fighter.width) / 2 - Math.abs(opponent.x - fighter.x);
-    if (fighter.orientation === ORIENTATIONS.LEFT) {
-      fighter.x -= collisionWidth / 2;
-      opponent.x += collisionWidth / 2;
-      return;
-    }
-
-    if (fighter.orientation === ORIENTATIONS.LEFT) {
-      fighter.x += collisionWidth / 2;
-      opponent.x -= collisionWidth / 2;
-      return;
-    }
-  }
-
-  setFightersOrientation() {
-    if (this.fighters[0].x < this.fighters[1].x) {
-      this.fighters[0].orientation = ORIENTATIONS.LEFT;
-      this.fighters[1].orientation = ORIENTATIONS.RIGHT;
-    } else {
-      this.fighters[0].orientation = ORIENTATIONS.RIGHT;
-      this.fighters[1].orientation = ORIENTATIONS.LEFT;
     }
   }
 
