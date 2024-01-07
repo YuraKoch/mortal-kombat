@@ -1,6 +1,7 @@
 import { ARENA, MOVE_TYPES, ORIENTATIONS } from "./constants.js";
 import { Fighter } from "./fighters.js";
-import { adjustFightersPosition } from "./systems/ajust-fighters-position-system.js";
+import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
+import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
 
 const KEYS = [
   {
@@ -66,9 +67,9 @@ export class Game {
 
   redrawCanvas() {
     this.updateFightersHoldMove();
-    adjustFightersPosition(this.fighters[0], this.fighters[1]);
+    runFightersPositionAjustmentSystem(this.fighters[0], this.fighters[1]);
     this.checkFightersAttack();
-    this.checkFightersLife();
+    runFightersLifeSystem(this.fighters[0], this.fighters[1]);
     this.updateLifebars();
 
     this.context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);

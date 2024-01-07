@@ -1,6 +1,6 @@
 import { ARENA, ORIENTATIONS } from "../constants.js";
 
-export function adjustFightersPosition(fighter1, fighter2) {
+export function runFightersPositionAjustmentSystem(fighter1, fighter2) {
   adjustFighterPosition(fighter1, fighter2);
   adjustFighterPosition(fighter2, fighter1);
 }
