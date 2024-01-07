@@ -42,3 +42,28 @@ export const ORIENTATIONS = {
   LEFT: 'left',
   RIGHT: 'right'
 };
+
+export const KEYS = [
+  {
+    UP: 'KeyW',
+    DOWN: 'KeyS',
+    LEFT: 'KeyA',
+    RIGHT: 'KeyD',
+    BLOCK: 'ShiftLeft',
+    HP: 'KeyR',
+    HK: 'KeyT',
+    LP: 'KeyF',
+    LK: 'KeyG'
+  },
+  {
+    UP: 'ArrowUp',
+    DOWN: 'ArrowDown',
+    LEFT: 'ArrowLeft',
+    RIGHT: 'ArrowRight',
+    BLOCK: 'ShiftRight',
+    HP: 'KeyI',
+    HK: 'KeyO',
+    LP: 'KeyK',
+    LK: 'KeyL'
+  }
+];

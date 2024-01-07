@@ -1,34 +1,10 @@
-import { ARENA, MOVE_TYPES, ORIENTATIONS } from "./constants.js";
+import { ARENA, MOVE_TYPES, ORIENTATIONS, KEYS } from "./constants.js";
 import { Fighter } from "./fighters.js";
 import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
 import { runFightersAttackSystem } from "./systems/fighters-attack-system.js";
 import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
 import { runLifebarsSystem } from "./systems/lifebars-system.js";
-
-const KEYS = [
-  {
-    UP: 'KeyW',
-    DOWN: 'KeyS',
-    LEFT: 'KeyA',
-    RIGHT: 'KeyD',
-    BLOCK: 'ShiftLeft',
-    HP: 'KeyR',
-    HK: 'KeyT',
-    LP: 'KeyF',
-    LK: 'KeyG'
-  },
-  {
-    UP: 'ArrowUp',
-    DOWN: 'ArrowDown',
-    LEFT: 'ArrowLeft',
-    RIGHT: 'ArrowRight',
-    BLOCK: 'ShiftRight',
-    HP: 'KeyI',
-    HK: 'KeyO',
-    LP: 'KeyK',
-    LK: 'KeyL'
-  }
-];
+import { runFightersMovementSystem } from "./systems/fighters-movement-system.js";
 
 export class Game {
   pressed = {};
@@ -58,12 +34,12 @@ export class Game {
     document.addEventListener('keydown', event => {
       if (!this.pressed[event.code]) {
         this.pressed[event.code] = true;
-        this.updateFightersMove();
+        runFightersMovementSystem(this.fighters[0], this.fighters[1], this.pressed);
       }
     });
     document.addEventListener('keyup', event => {
       delete this.pressed[event.code];
-      this.updateFightersMove();
+      runFightersMovementSystem(this.fighters[0], this.fighters[1], this.pressed);
     });
   }
 
@@ -97,72 +73,9 @@ export class Game {
     this.context.drawImage(fighter.currentImg, x, y);
   }
 
-  checkFightersLife() {
-    this.checkFighterLife(this.fighters[0], this.fighters[1]);
-    this.checkFighterLife(this.fighters[1], this.fighters[0]);
-  }
-
-  checkFighterLife(fighter, opponent) {
-    if (fighter.life === 0 && fighter.moveType !== MOVE_TYPES.FALL) {
-      opponent.currentMove.stop();
-      opponent.setMove(MOVE_TYPES.WIN);
-      fighter.unlock();
-      fighter.setMove(MOVE_TYPES.FALL);
-    }
-  }
-
-  updateFightersMove() {
-    this.fighters[0].setMove(this.getMoveFromCombination(0));
-    this.fighters[1].setMove(this.getMoveFromCombination(1));
-  }
-
   updateFightersHoldMove() {
     this.fighters[0].setMove(this.getHoldMoveFromCombination(0));
     this.fighters[1].setMove(this.getHoldMoveFromCombination(1));
-  }
-
-  getMoveFromCombination(playerIndex) {
-    const fighter = this.fighters[playerIndex];
-    const orientation = fighter.orientation;
-    const keys = KEYS[playerIndex];
-    const currentFighterMove = fighter.moveType;
-
-    if (this.pressed[keys.HK] && currentFighterMove === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_KICK;
-    if (this.pressed[keys.HK] && currentFighterMove === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_KICK;
-    if (this.pressed[keys.LK] && currentFighterMove === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_KICK;
-    if (this.pressed[keys.LK] && currentFighterMove === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_KICK;
-    if (this.pressed[keys.HP] && currentFighterMove === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_PUNCH;
-    if (this.pressed[keys.HP] && currentFighterMove === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_PUNCH;
-    if (this.pressed[keys.LP] && currentFighterMove === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_PUNCH;
-    if (this.pressed[keys.LP] && currentFighterMove === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_PUNCH;
-
-    if (this.pressed[keys.BLOCK]) return MOVE_TYPES.BLOCK;
-
-    if (this.pressed[keys.LEFT] && this.pressed[keys.UP]) return MOVE_TYPES.BACKWARD_JUMP;
-    if (this.pressed[keys.LEFT] && this.pressed[keys.HK] && orientation === ORIENTATIONS.LEFT) return MOVE_TYPES.SPIN_KICK;
-
-    if (this.pressed[keys.RIGHT] && this.pressed[keys.UP]) return MOVE_TYPES.FORWARD_JUMP;
-    if (this.pressed[keys.RIGHT] && this.pressed[keys.HK] && orientation === ORIENTATIONS.RIGHT) return MOVE_TYPES.SPIN_KICK;
-
-    if (this.pressed[keys.DOWN] && this.pressed[keys.HP]) return MOVE_TYPES.UPPERCUT;
-    if (this.pressed[keys.DOWN] && this.pressed[keys.LP]) return MOVE_TYPES.SQUAT_LOW_PUNCH;
-    if (this.pressed[keys.DOWN] && this.pressed[keys.HK]) return MOVE_TYPES.SQUAT_HIGH_KICK;
-    if (this.pressed[keys.DOWN] && this.pressed[keys.LK]) return MOVE_TYPES.SQUAT_LOW_KICK;
-
-    if (this.pressed[keys.HK]) return MOVE_TYPES.HIGH_KICK;
-    if (this.pressed[keys.LK]) return MOVE_TYPES.LOW_KICK;
-    if (this.pressed[keys.HP]) return MOVE_TYPES.HIGH_PUNCH;
-    if (this.pressed[keys.LP]) return MOVE_TYPES.LOW_PUNCH;
-
-    if (this.pressed[keys.LEFT]) return MOVE_TYPES.WALK_BACKWARD;
-    if (this.pressed[keys.RIGHT]) return MOVE_TYPES.WALK;
-    if (this.pressed[keys.DOWN]) return MOVE_TYPES.SQUAT;
-    if (this.pressed[keys.UP]) return MOVE_TYPES.JUMP;
-
-    if (currentFighterMove === MOVE_TYPES.SQUAT && !this.pressed[keys.DOWN]) return MOVE_TYPES.STAND_UP;
-    if (currentFighterMove === MOVE_TYPES.BLOCK && !this.pressed[keys.BLOCK]) return MOVE_TYPES.STAND;
-
-    return MOVE_TYPES.STAND;
   }
 
   getHoldMoveFromCombination(playerIndex) {
