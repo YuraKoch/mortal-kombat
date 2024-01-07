@@ -1,10 +1,11 @@
-import { ARENA, MOVE_TYPES, ORIENTATIONS, KEYS } from "./constants.js";
+import { ARENA, ORIENTATIONS } from "./constants.js";
 import { Fighter } from "./fighters.js";
 import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
 import { runFightersAttackSystem } from "./systems/fighters-attack-system.js";
 import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
 import { runLifebarsSystem } from "./systems/lifebars-system.js";
 import { runFightersMovementSystem } from "./systems/fighters-movement-system.js";
+import { runFightersHoldMovementSystem } from "./systems/fighters-hold-movement-system.js";
 
 export class Game {
   pressed = {};
@@ -44,7 +45,7 @@ export class Game {
   }
 
   animate() {
-    this.updateFightersHoldMove();
+    runFightersHoldMovementSystem(this.fighters[0], this.fighters[1], this.pressed);
     runFightersPositionAjustmentSystem(this.fighters[0], this.fighters[1]);
     runFightersAttackSystem(this.fighters[0], this.fighters[1]);
     runFightersLifeSystem(this.fighters[0], this.fighters[1]);
@@ -71,24 +72,5 @@ export class Game {
       fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width;
     const y = fighter.y - fighter.currentImg.height;
     this.context.drawImage(fighter.currentImg, x, y);
-  }
-
-  updateFightersHoldMove() {
-    this.fighters[0].setMove(this.getHoldMoveFromCombination(0));
-    this.fighters[1].setMove(this.getHoldMoveFromCombination(1));
-  }
-
-  getHoldMoveFromCombination(playerIndex) {
-    const keys = KEYS[playerIndex];
-    if (this.pressed[keys.BLOCK]) return MOVE_TYPES.BLOCK;
-
-    if (this.pressed[keys.LEFT] && this.pressed[keys.UP]) return MOVE_TYPES.BACKWARD_JUMP;
-    if (this.pressed[keys.RIGHT] && this.pressed[keys.UP]) return MOVE_TYPES.FORWARD_JUMP;
-
-    if (this.pressed[keys.LEFT]) return MOVE_TYPES.WALK_BACKWARD;
-    if (this.pressed[keys.RIGHT]) return MOVE_TYPES.WALK;
-    if (this.pressed[keys.DOWN]) return MOVE_TYPES.SQUAT;
-    if (this.pressed[keys.UP]) return MOVE_TYPES.JUMP;
-    return MOVE_TYPES.STAND;
   }
 }
