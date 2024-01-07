@@ -1,4 +1,4 @@
-import { Game } from "./controller.js";
+import { Game } from "./game.js";
 
 async function startNewGame() {
   await new Game().init();

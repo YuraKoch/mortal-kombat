@@ -6,6 +6,7 @@ import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
 import { runLifebarsSystem } from "./systems/lifebars-system.js";
 import { runFightersMovementSystem } from "./systems/fighters-movement-system.js";
 import { runFightersHoldMovementSystem } from "./systems/fighters-hold-movement-system.js";
+import { useDrawSystem } from "./systems/draw-system.js";
 
 export class Game {
   pressed = {};
@@ -51,26 +52,8 @@ export class Game {
     runFightersLifeSystem(this.fighters[0], this.fighters[1]);
     runLifebarsSystem(this.fighters[0], this.fighters[1]);
 
-    this.context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);
-    this.drawFighter(this.fighters[0]);
-    this.drawFighter(this.fighters[1]);
-
-    // for test
-    // this.context.strokeStyle = 'green';
-    // this.context.strokeRect(this.fighters[0].x - this.fighters[0].width / 2, this.fighters[0].y - this.fighters[0].height, this.fighters[0].width, this.fighters[0].height);
-    // this.context.strokeRect(this.fighters[1].x - this.fighters[1].width / 2, this.fighters[1].y - this.fighters[1].height, this.fighters[1].width, this.fighters[1].height);
-    // this.context.strokeStyle = 'red';
-    // this.fighters[0].damage && this.context.strokeRect(this.fighters[0].currentMove.damageX - this.fighters[0].currentMove.damageWidth / 2, this.fighters[0].currentMove.damageY - this.fighters[0].currentMove.damageHeight, this.fighters[0].currentMove.damageWidth, this.fighters[0].currentMove.damageHeight);
-    // this.fighters[1].damage && this.context.strokeRect(this.fighters[1].currentMove.damageX - this.fighters[1].currentMove.damageWidth / 2, this.fighters[1].currentMove.damageY - this.fighters[1].currentMove.damageHeight, this.fighters[1].currentMove.damageWidth, this.fighters[1].currentMove.damageHeight);
+    useDrawSystem(this.fighters[0], this.fighters[1], this.context);
 
     requestAnimationFrame(() => this.animate());
-  }
-
-  drawFighter(fighter) {
-    const x = fighter.orientation === ORIENTATIONS.LEFT ?
-      fighter.x - fighter.width / 2 :
-      fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width;
-    const y = fighter.y - fighter.currentImg.height;
-    this.context.drawImage(fighter.currentImg, x, y);
   }
 }
