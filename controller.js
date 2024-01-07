@@ -72,7 +72,7 @@ export class Game {
 
   refreshCanvas() {
     this.updateFightersHoldMove();
-    this.synchronizeFighters();
+    this.adjustFightersPosition();
     this.checkFightersAttack();
     this.checkFightersLife();
 
@@ -114,7 +114,9 @@ export class Game {
 
   checkDistanceForAttack(fighter, opponent) {
     const intersectX = Math.abs(opponent.x - fighter.currentMove.damageX) < (opponent.width + fighter.currentMove.damageWidth) / 2;
-    const intersectY = Math.abs((opponent.y - opponent.height / 2) - (fighter.currentMove.damageY - fighter.currentMove.damageHeight / 2)) < (opponent.height + fighter.currentMove.damageHeight) / 2;
+    const opponentCentralY = opponent.y - opponent.height / 2;
+    const fighterCentralDamageY = fighter.currentMove.damageY - fighter.currentMove.damageHeight / 2;
+    const intersectY = Math.abs(opponentCentralY - fighterCentralDamageY) < (opponent.height + fighter.currentMove.damageHeight) / 2;
     return intersectX && intersectY;
   }
 
@@ -137,12 +139,12 @@ export class Game {
     }
   }
 
-  synchronizeFighters() {
-    this.synchronizeFighter(this.fighters[0], this.fighters[1]);
-    this.synchronizeFighter(this.fighters[1], this.fighters[0]);
+  adjustFightersPosition() {
+    this.adjustFighterPosition(this.fighters[0], this.fighters[1]);
+    this.adjustFighterPosition(this.fighters[1], this.fighters[0]);
   }
 
-  synchronizeFighter(fighter, opponent) {
+  adjustFighterPosition(fighter, opponent) {
     if (fighter.x <= fighter.width / 2) {
       fighter.x = fighter.width / 2;
       return;
