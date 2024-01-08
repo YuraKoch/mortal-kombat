@@ -17,5 +17,6 @@ function getHoldMoveFromCombination(keys, pressed) {
   if (pressed[keys.RIGHT]) return MOVE_TYPES.WALK;
   if (pressed[keys.DOWN]) return MOVE_TYPES.SQUAT;
   if (pressed[keys.UP]) return MOVE_TYPES.JUMP;
+
   return MOVE_TYPES.STAND;
 }
