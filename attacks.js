@@ -33,7 +33,7 @@ class Attack extends Move {
   }
 
   action() {
-    if (this.currentStep === Math.round(this.totalSteps / 2) && !this.moveBack) {
+    if (this.currentStep === Math.floor(this.totalSteps / 2) && !this.moveBack) {
       this.owner.damage = this.damage;
     }
   }
@@ -89,11 +89,19 @@ export class HighPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.HIGH_PUNCH,
-      stepDuration: 50,
+      stepDuration: 60,
       damage: 8,
       damageWidth: PLAYER_WIDTH * 0.8,
       damageYOffset: PLAYER_HEIGHT * 0.7,
     });
+  }
+
+  shouldStop() {
+    return this.currentStep >= this.totalSteps;
+  }
+
+  calculateNextStep() {
+    this.currentStep += 1;
   }
 }
 
@@ -102,11 +110,19 @@ export class LowPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.LOW_PUNCH,
-      stepDuration: 50,
+      stepDuration: 60,
       damage: 5,
       damageWidth: PLAYER_WIDTH,
       damageYOffset: PLAYER_HEIGHT * 0.6,
     });
+  }
+
+  shouldStop() {
+    return this.currentStep >= this.totalSteps;
+  }
+
+  calculateNextStep() {
+    this.currentStep += 1;
   }
 }
 
@@ -202,7 +218,6 @@ export class ForwardJumpKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_KICK,
-      stepDuration: 80,
       damage: 10,
       damageWidth: PLAYER_WIDTH,
       damageYOffset: 0,
@@ -251,7 +266,6 @@ export class BackwardJumpKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_KICK,
-      stepDuration: 80,
       damage: 10,
       damageWidth: PLAYER_WIDTH,
       damageYOffset: 0,
@@ -300,7 +314,6 @@ export class ForwardJumpPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_PUNCH,
-      stepDuration: 80,
       damage: 8,
       damageWidth: PLAYER_WIDTH,
       damageYOffset: 0,
@@ -349,7 +362,6 @@ export class BackwardJumpPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_PUNCH,
-      stepDuration: 80,
       damage: 8,
       damageWidth: PLAYER_WIDTH,
       damageYOffset: 0,
