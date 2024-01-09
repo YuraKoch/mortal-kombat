@@ -1,10 +1,6 @@
-import { PLAYER_BOTTOM, MOVE_TYPES, ORIENTATIONS, PLAYER_HEIGHT } from "./constants.js";
+import { PLAYER_BOTTOM, MOVE_TYPES, IMAGE_COUNT_BY_MOVE_TYPE, ORIENTATIONS, PLAYER_HEIGHT } from "./constants.js";
 
 export class Move {
-  imagesBySteps = {
-    [ORIENTATIONS.LEFT]: [],
-    [ORIENTATIONS.RIGHT]: [],
-  };
   currentStep = 0;
   isContinue = false;
   interval;
@@ -13,52 +9,36 @@ export class Move {
   constructor(options) {
     this.owner = options.owner;
     this.type = options.type;
-    this.totalSteps = options.totalSteps;
-    this.stepDuration = options.stepDuration || 80;
-    this.nextMoveType = options.nextMoveType || MOVE_TYPES.STAND;
-    this.nextMoveStep = options.nextMoveStep || 0;
+    this.totalSteps = IMAGE_COUNT_BY_MOVE_TYPE[options.type];
+    this.stepDuration = options.stepDuration ?? 80;
+    this.nextMoveType = options.nextMoveType ?? MOVE_TYPES.STAND;
+    this.nextMoveStep = options.nextMoveStep ?? 0;
   }
-
-  async init() {
-    await this.loadImages(ORIENTATIONS.LEFT);
-    await this.loadImages(ORIENTATIONS.RIGHT);
-  }
-
-  async loadImages(orientation) {
-    const imagePromises = [];
-
-    for (let i = 0; i < this.totalSteps; i++) {
-      const img = new Image();
-      img.src = `./images/fighters/${this.owner.name}/${orientation}/${this.type}/${i}.png`;
-      this.imagesBySteps[orientation][i] = img;
-      imagePromises.push(new Promise(resolve => img.onload = resolve));
-    }
-
-    await Promise.all(imagePromises);
-  };
 
   start(step = 0) {
     this.isContinue = true;
     this.currentStep = step;
-    this.step();
+    this.action();
     this.interval = setInterval(() => this.step(), this.stepDuration);
   }
 
   step() {
-    const step = this.currentStep < this.totalSteps ? this.currentStep : this.totalSteps - 1;
-    this.owner.currentImg = this.imagesBySteps[this.owner.orientation][step];
-    this.action();
     this.calculateNextStep();
+    if (this.shouldStop()) {
+      this.stop();
+      this.owner.setMove(this.nextMoveType, this.nextMoveStep);
+      return;
+    }
+    this.action();
+  }
+
+  shouldStop() {
+    return this.currentStep >= this.totalSteps;
   }
 
   action() { }
 
   calculateNextStep() {
-    if (this.currentStep >= this.totalSteps) {
-      this.stop();
-      this.owner.setMove(this.nextMoveType, this.nextMoveStep);
-      return;
-    }
     this.currentStep += 1;
   }
 
@@ -74,7 +54,6 @@ export class Stand extends Move {
     super({
       owner: owner,
       type: MOVE_TYPES.STAND,
-      totalSteps: 9,
     });
   }
 
@@ -95,7 +74,6 @@ export class Walk extends Move {
     super({
       owner: owner,
       type: MOVE_TYPES.WALK,
-      totalSteps: 9,
     });
   }
 
@@ -118,7 +96,6 @@ export class WalkBackward extends Move {
     super({
       owner: owner,
       type: MOVE_TYPES.WALK_BACKWARD,
-      totalSteps: 9,
     });
   }
 
@@ -141,7 +118,6 @@ export class Squat extends Move {
     super({
       owner,
       type: MOVE_TYPES.SQUAT,
-      totalSteps: 3,
       stepDuration: 40,
     });
   }
@@ -153,6 +129,9 @@ export class Squat extends Move {
 
   calculateNextStep() {
     this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
   }
 }
 
@@ -161,8 +140,7 @@ export class StandUp extends Move {
     super({
       owner,
       type: MOVE_TYPES.STAND_UP,
-      totalSteps: 3,
-      stepDuration: 80,
+      stepDuration: 40,
     });
   }
 
@@ -177,7 +155,6 @@ export class Block extends Move {
     super({
       owner,
       type: MOVE_TYPES.BLOCK,
-      totalSteps: 3,
       stepDuration: 40,
     });
   }
@@ -188,6 +165,9 @@ export class Block extends Move {
 
   calculateNextStep() {
     this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
   }
 }
 
@@ -196,13 +176,11 @@ export class Jump extends Move {
     super({
       owner,
       type: MOVE_TYPES.JUMP,
-      totalSteps: 8,
     });
   }
 
   start() {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = 0;
     super.start();
   }
 
@@ -210,14 +188,13 @@ export class Jump extends Move {
     if (this.currentStep === 0) {
       return;
     }
-
-    if (this.currentStep >= this.totalSteps / 2) {
-      this.delta += 25;
+    if (this.currentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.currentStep < this.totalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
-
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
   }
 }
 
@@ -226,13 +203,11 @@ export class ForwardJump extends Move {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP,
-      totalSteps: 8,
     });
   }
 
   start() {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = 0;
     super.start();
   }
 
@@ -240,15 +215,15 @@ export class ForwardJump extends Move {
     if (this.currentStep === 0) {
       return;
     }
-
-    if (this.currentStep >= this.totalSteps / 2) {
-      this.delta += 25;
+    if (this.currentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.currentStep < this.totalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
 
     this.owner.x += 23;
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
   }
 }
 
@@ -257,13 +232,11 @@ export class BackwardJump extends Move {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP,
-      totalSteps: 8,
     });
   }
 
   start() {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = 0;
     super.start();
   }
 
@@ -271,15 +244,15 @@ export class BackwardJump extends Move {
     if (this.currentStep === 0) {
       return;
     }
-
-    if (this.currentStep >= this.totalSteps / 2) {
-      this.delta += 25;
+    if (this.currentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.currentStep < this.totalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
 
     this.owner.x -= 23;
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
   }
 }
 
@@ -288,7 +261,6 @@ export class Endure extends Move {
     super({
       owner,
       type: MOVE_TYPES.ENDURE,
-      totalSteps: 3,
     });
   }
 }
@@ -298,7 +270,6 @@ export class SquatEndure extends Move {
     super({
       owner,
       type: MOVE_TYPES.SQUAT_ENDURE,
-      totalSteps: 3,
       nextMoveType: MOVE_TYPES.SQUAT,
       nextMoveStep: 2,
     });
@@ -310,16 +281,15 @@ export class KnockDown extends Move {
     super({
       owner,
       type: MOVE_TYPES.KNOCK_DOWN,
-      totalSteps: 10,
       nextMoveType: MOVE_TYPES.ATTRACTIVE_STAND_UP,
     });
   }
 
   action() {
     if (this.owner.orientation === ORIENTATIONS.LEFT) {
-      this.owner.x -= 20;
+      this.owner.x -= 15;
     } else {
-      this.owner.x += 20;
+      this.owner.x += 15;
     }
   }
 }
@@ -329,8 +299,6 @@ export class AttractiveStandUp extends Move {
     super({
       owner,
       type: MOVE_TYPES.ATTRACTIVE_STAND_UP,
-      totalSteps: 4,
-      stepDuration: 100,
     });
   }
 
@@ -345,20 +313,7 @@ export class Fall extends Move {
     super({
       owner,
       type: MOVE_TYPES.FALL,
-      totalSteps: 7,
-      stepDuration: 100,
-      nextMoveType: MOVE_TYPES.FALL,
     });
-  }
-
-  start() {
-    this.ownerX = this.owner.x;
-    super.start();
-  }
-
-  action() {
-    const delta = this.owner.width - this.owner.currentImg.width;
-    this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
   }
 }
 
@@ -367,19 +322,6 @@ export class Win extends Move {
     super({
       owner,
       type: MOVE_TYPES.WIN,
-      totalSteps: 10,
-      stepDuration: 100,
-      nextMoveType: MOVE_TYPES.WIN,
     });
-  }
-
-  start() {
-    this.ownerX = this.owner.x;
-    super.start();
-  }
-
-  action() {
-    const delta = this.owner.width / 2 - this.owner.currentImg.width / 2;
-    this.owner.x = this.owner.orientation === ORIENTATIONS.LEFT ? this.ownerX + delta : this.ownerX - delta;
   }
 }

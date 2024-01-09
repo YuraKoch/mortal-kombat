@@ -14,11 +14,11 @@ class Attack extends Move {
 
   start() {
     this.moveBack = false;
-    this.setDamagePosition();
+    this.updateDamageRectangleXY();
     super.start();
   }
 
-  setDamagePosition() {
+  updateDamageRectangleXY() {
     if (this.owner.orientation === ORIENTATIONS.LEFT) {
       this.damageX = this.owner.x + PLAYER_WIDTH / 2 + this.damageWidth / 2;
     } else {
@@ -28,6 +28,10 @@ class Attack extends Move {
     this.damageY = this.owner.y - this.damageYOffset;
   }
 
+  shouldStop() {
+    return this.moveBack && this.currentStep <= 0;
+  }
+
   action() {
     if (this.currentStep === Math.round(this.totalSteps / 2) && !this.moveBack) {
       this.owner.damage = this.damage;
@@ -35,12 +39,6 @@ class Attack extends Move {
   }
 
   calculateNextStep() {
-    if (this.moveBack && this.currentStep <= 0) {
-      this.stop();
-      this.owner.setMove(this.nextMoveType, this.nextMoveStep);
-      return;
-    }
-
     if (this.moveBack) {
       this.currentStep -= 1;
       return;
@@ -65,7 +63,6 @@ export class HighKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.HIGH_KICK,
-      totalSteps: 7,
       stepDuration: 50,
       damage: 10,
       damageYOffset: PLAYER_HEIGHT * 0.7,
@@ -79,7 +76,6 @@ export class LowKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.LOW_KICK,
-      totalSteps: 6,
       stepDuration: 50,
       damage: 6,
       damageWidth: PLAYER_WIDTH * 1.2,
@@ -93,7 +89,6 @@ export class HighPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.HIGH_PUNCH,
-      totalSteps: 5,
       stepDuration: 50,
       damage: 8,
       damageWidth: PLAYER_WIDTH * 0.8,
@@ -107,7 +102,6 @@ export class LowPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.LOW_PUNCH,
-      totalSteps: 5,
       stepDuration: 50,
       damage: 5,
       damageWidth: PLAYER_WIDTH,
@@ -121,7 +115,6 @@ export class Uppercut extends Attack {
     super({
       owner,
       type: MOVE_TYPES.UPPERCUT,
-      totalSteps: 5,
       stepDuration: 60,
       damage: 13,
       damageWidth: PLAYER_WIDTH * 0.8,
@@ -141,7 +134,6 @@ export class SquatLowKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.SQUAT_LOW_KICK,
-      totalSteps: 3,
       stepDuration: 70,
       nextMoveType: MOVE_TYPES.SQUAT,
       nextMoveStep: 2,
@@ -157,7 +149,6 @@ export class SquatHighKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.SQUAT_HIGH_KICK,
-      totalSteps: 4,
       stepDuration: 70,
       nextMoveType: MOVE_TYPES.SQUAT,
       nextMoveStep: 2,
@@ -173,7 +164,6 @@ export class SquatLowPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.SQUAT_LOW_PUNCH,
-      totalSteps: 3,
       stepDuration: 70,
       nextMoveType: MOVE_TYPES.SQUAT,
       nextMoveStep: 2,
@@ -189,7 +179,6 @@ export class SpinKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.SPIN_KICK,
-      totalSteps: 8,
       stepDuration: 60,
       damage: 13,
       damageWidth: PLAYER_WIDTH * 0.9,
@@ -198,12 +187,12 @@ export class SpinKick extends Attack {
     this.dontReturn = true;
   }
 
+  shouldStop() {
+    return this.currentStep >= this.totalSteps;
+  }
+
   calculateNextStep() {
     this.currentStep += 1;
-    if (this.currentStep === this.totalSteps) {
-      this.stop();
-      this.owner.setMove(this.nextMoveType);
-    }
   }
 }
 
@@ -213,7 +202,6 @@ export class ForwardJumpKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_KICK,
-      totalSteps: 3,
       stepDuration: 80,
       damage: 10,
       damageWidth: PLAYER_WIDTH,
@@ -221,35 +209,39 @@ export class ForwardJumpKick extends Attack {
     });
   }
 
-  start(jumpCurrentStep, jumpTotalSteps, delta) {
+  start(jumpCurrentStep, jumpTotalSteps) {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = delta;
     this.jumpCurrentStep = jumpCurrentStep;
     this.jumpTotalSteps = jumpTotalSteps;
     super.start();
   }
 
+  shouldStop() {
+    return this.jumpCurrentStep >= this.jumpTotalSteps;
+  }
+
   action() {
     super.action();
 
-    if (this.jumpCurrentStep >= this.jumpTotalSteps / 2) {
-      this.delta += 25;
+    if (this.jumpCurrentStep === 0) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9 + 25;
+    } else if (this.jumpCurrentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.jumpCurrentStep < this.jumpTotalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
 
-    if (this.owner.damage > 0) this.owner.x += 23;
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
-    this.setDamagePosition();
+    this.owner.x += 23;
+    this.updateDamageRectangleXY();
   }
 
   calculateNextStep() {
-    if (this.jumpCurrentStep >= this.jumpTotalSteps) {
-      this.stop();
-      this.owner.setMove(MOVE_TYPES.STAND);
-      return;
-    }
     this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
     this.jumpCurrentStep += 1;
   }
 }
@@ -259,7 +251,6 @@ export class BackwardJumpKick extends Attack {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_KICK,
-      totalSteps: 3,
       stepDuration: 80,
       damage: 10,
       damageWidth: PLAYER_WIDTH,
@@ -267,35 +258,39 @@ export class BackwardJumpKick extends Attack {
     });
   }
 
-  start(jumpCurrentStep, jumpTotalSteps, delta) {
+  start(jumpCurrentStep, jumpTotalSteps) {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = delta;
     this.jumpCurrentStep = jumpCurrentStep;
     this.jumpTotalSteps = jumpTotalSteps;
     super.start();
   }
 
+  shouldStop() {
+    return this.jumpCurrentStep >= this.jumpTotalSteps;
+  }
+
   action() {
     super.action();
 
-    if (this.jumpCurrentStep >= this.jumpTotalSteps / 2) {
-      this.delta += 25;
+    if (this.jumpCurrentStep === 0) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9 + 25;
+    } else if (this.jumpCurrentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.jumpCurrentStep < this.jumpTotalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
 
-    if (this.owner.damage > 0) this.owner.x -= 23;
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
-    this.setDamagePosition();
+    this.owner.x -= 23;
+    this.updateDamageRectangleXY();
   }
 
   calculateNextStep() {
-    if (this.jumpCurrentStep >= this.jumpTotalSteps) {
-      this.stop();
-      this.owner.setMove(MOVE_TYPES.STAND);
-      return;
-    }
     this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
     this.jumpCurrentStep += 1;
   }
 }
@@ -305,7 +300,6 @@ export class ForwardJumpPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_PUNCH,
-      totalSteps: 3,
       stepDuration: 80,
       damage: 8,
       damageWidth: PLAYER_WIDTH,
@@ -313,35 +307,39 @@ export class ForwardJumpPunch extends Attack {
     });
   }
 
-  start(jumpCurrentStep, jumpTotalSteps, delta) {
+  start(jumpCurrentStep, jumpTotalSteps) {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = delta;
     this.jumpCurrentStep = jumpCurrentStep;
     this.jumpTotalSteps = jumpTotalSteps;
     super.start();
   }
 
+  shouldStop() {
+    return this.jumpCurrentStep >= this.jumpTotalSteps;
+  }
+
   action() {
     super.action();
 
-    if (this.jumpCurrentStep >= this.jumpTotalSteps / 2) {
-      this.delta += 25;
+    if (this.jumpCurrentStep === 0) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9 + 25;
+    } else if (this.jumpCurrentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.jumpCurrentStep < this.jumpTotalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
 
-    if (this.owner.damage > 0) this.owner.x += 23;
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
-    this.setDamagePosition();
+    this.owner.x += 23;
+    this.updateDamageRectangleXY();
   }
 
   calculateNextStep() {
-    if (this.jumpCurrentStep >= this.jumpTotalSteps) {
-      this.stop();
-      this.owner.setMove(MOVE_TYPES.STAND);
-      return;
-    }
     this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
     this.jumpCurrentStep += 1;
   }
 }
@@ -351,7 +349,6 @@ export class BackwardJumpPunch extends Attack {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_PUNCH,
-      totalSteps: 3,
       stepDuration: 80,
       damage: 8,
       damageWidth: PLAYER_WIDTH,
@@ -359,35 +356,39 @@ export class BackwardJumpPunch extends Attack {
     });
   }
 
-  start(jumpCurrentStep, jumpTotalSteps, delta) {
+  start(jumpCurrentStep, jumpTotalSteps) {
     this.owner.height = PLAYER_HEIGHT / 2;
-    this.delta = delta;
     this.jumpCurrentStep = jumpCurrentStep;
     this.jumpTotalSteps = jumpTotalSteps;
     super.start();
   }
 
+  shouldStop() {
+    return this.jumpCurrentStep >= this.jumpTotalSteps;
+  }
+
   action() {
     super.action();
 
-    if (this.jumpCurrentStep >= this.jumpTotalSteps / 2) {
-      this.delta += 25;
+    if (this.jumpCurrentStep === 0) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9 + 25;
+    } else if (this.jumpCurrentStep === 1) {
+      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
+    } else if (this.jumpCurrentStep < this.jumpTotalSteps / 2) {
+      this.owner.y -= 25;
     } else {
-      this.delta -= 25;
+      this.owner.y += 25;
     }
 
-    if (this.owner.damage > 0) this.owner.x -= 23;
-    this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 1.2 + this.owner.currentImg.height + this.delta;
-    this.setDamagePosition();
+    this.owner.x -= 23;
+    this.updateDamageRectangleXY();
   }
 
   calculateNextStep() {
-    if (this.jumpCurrentStep >= this.jumpTotalSteps) {
-      this.stop();
-      this.owner.setMove(MOVE_TYPES.STAND);
-      return;
-    }
     this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
     this.jumpCurrentStep += 1;
   }
 }

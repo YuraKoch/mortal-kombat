@@ -1,9 +1,11 @@
-import { ARENA, ORIENTATIONS } from "../constants.js";
+import { ARENA, ORIENTATIONS, MOVE_TYPES } from "../constants.js";
 
-export function useDrawSystem(fighter1, fighter2, context) {
+const GAME_OVER_MOVE_TYPES = [MOVE_TYPES.WIN, MOVE_TYPES.FALL];
+
+export function runDrawSystem(fighter1, fighter2, context, resourceManager) {
   context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);
-  drawFighter(fighter1, context);
-  drawFighter(fighter2, context);
+  drawFighter(fighter1, context, resourceManager);
+  drawFighter(fighter2, context, resourceManager);
 
   // for test
   // context.strokeStyle = 'green';
@@ -24,10 +26,26 @@ export function useDrawSystem(fighter1, fighter2, context) {
   // );
 }
 
-function drawFighter(fighter, context) {
-  const x = fighter.orientation === ORIENTATIONS.LEFT ?
-    fighter.x - fighter.width / 2 :
-    fighter.x - fighter.width / 2 + fighter.width - fighter.currentImg.width;
-  const y = fighter.y - fighter.currentImg.height;
-  context.drawImage(fighter.currentImg, x, y);
+function drawFighter(fighter, context, resourceManager) {
+  const currentImg = resourceManager.getImage(
+    fighter.name,
+    fighter.orientation,
+    fighter.moveType,
+    fighter.currentMove.currentStep
+  );
+
+  let x;
+  if (GAME_OVER_MOVE_TYPES.includes(fighter.moveType)) {
+    x = fighter.orientation === ORIENTATIONS.LEFT
+      ? fighter.x + fighter.width / 2 - currentImg.width / 2
+      : fighter.x - fighter.width / 2 + currentImg.width / 2;
+  } else {
+    x = fighter.orientation === ORIENTATIONS.LEFT
+      ? fighter.x - fighter.width / 2
+      : fighter.x - fighter.width / 2 + fighter.width - currentImg.width;
+  }
+
+  const y = fighter.y - currentImg.height;
+
+  context.drawImage(currentImg, x, y);
 }

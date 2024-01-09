@@ -43,7 +43,6 @@ const JUMP_ATTACK_MOVE_TYPES = [MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWAR
 const INTERRUPTED_MOVE_TYPES = [MOVE_TYPES.STAND, MOVE_TYPES.WALK, MOVE_TYPES.WALK_BACKWARD, MOVE_TYPES.SQUAT, MOVE_TYPES.BLOCK];
 
 export class Fighter {
-  currentImg;
   currentMove;
   life = 100;
   width = PLAYER_WIDTH;
@@ -87,10 +86,6 @@ export class Fighter {
     this.moves[MOVE_TYPES.BACKWARD_JUMP_PUNCH] = new BackwardJumpPunch(this);
     this.moves[MOVE_TYPES.FALL] = new Fall(this);
     this.moves[MOVE_TYPES.WIN] = new Win(this);
-
-    for (const move of Object.values(this.moves)) {
-      await move.init();
-    }
 
     this.setMove(MOVE_TYPES.STAND);
   }
@@ -140,10 +135,11 @@ export class Fighter {
     if (JUMP_ATTACK_MOVE_TYPES.includes(newMoveType)) {
       const jumpCurrentStep = this.currentMove.currentStep;
       const jumpTotalSteps = this.currentMove.totalSteps;
-      const delta = this.currentMove.delta;
+      const jumpY = this.y;
       this.currentMove.stop();
       this.currentMove = this.moves[newMoveType];
-      this.currentMove.start(jumpCurrentStep, jumpTotalSteps, delta);
+      this.y = jumpY;
+      this.currentMove.start(jumpCurrentStep, jumpTotalSteps);
       return;
     }
 

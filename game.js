@@ -1,15 +1,18 @@
 import { ARENA, ORIENTATIONS } from "./constants.js";
 import { Fighter } from "./fighters.js";
+import { ResourceManager } from "./resource-manager.js";
 import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
 import { runFightersAttackSystem } from "./systems/fighters-attack-system.js";
 import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
 import { runLifebarsSystem } from "./systems/lifebars-system.js";
 import { runFightersMovementSystem } from "./systems/fighters-movement-system.js";
 import { runFightersHoldMovementSystem } from "./systems/fighters-hold-movement-system.js";
-import { useDrawSystem } from "./systems/draw-system.js";
+import { runDrawSystem } from "./systems/draw-system.js";
 
 export class Game {
   pressed = {};
+  fighters = [];
+  resourceManager = new ResourceManager();
 
   async init() {
     await this.initializeFighters();
@@ -19,10 +22,14 @@ export class Game {
   }
 
   async initializeFighters() {
-    this.fighters = [];
     this.fighters[0] = new Fighter('subzero', ORIENTATIONS.LEFT);
     this.fighters[1] = new Fighter('kano', ORIENTATIONS.RIGHT);
-    await Promise.all([this.fighters[0].init(), this.fighters[1].init()]);
+
+    await this.resourceManager.loadFighterImages(this.fighters[0].name);
+    await this.resourceManager.loadFighterImages(this.fighters[1].name);
+
+    this.fighters[0].init();
+    this.fighters[1].init();
   }
 
   initCanvas() {
@@ -52,7 +59,7 @@ export class Game {
     runFightersLifeSystem(this.fighters[0], this.fighters[1]);
     runLifebarsSystem(this.fighters[0], this.fighters[1]);
 
-    useDrawSystem(this.fighters[0], this.fighters[1], this.context);
+    runDrawSystem(this.fighters[0], this.fighters[1], this.context, this.resourceManager);
 
     requestAnimationFrame(() => this.animate());
   }
