@@ -6,9 +6,6 @@ import {
   Squat,
   StandUp,
   Block,
-  Jump,
-  ForwardJump,
-  BackwardJump,
   Endure,
   SquatEndure,
   KnockDown,
@@ -16,6 +13,11 @@ import {
   Fall,
   Win,
 } from "./moves.js";
+import {
+  Jump,
+  ForwardJump,
+  BackwardJump,
+} from "./jump-moves.js";
 import {
   HighKick,
   LowKick,
