@@ -9,7 +9,7 @@ export class Attack extends Move {
     this.damage = options.damage;
     this.damageWidth = options.damageWidth ?? PLAYER_WIDTH;
     this.damageHeight = options.damageHeight ?? PLAYER_HEIGHT * 0.4;
-    this.damageYOffset = options.damageYOffset ?? PLAYER_HEIGHT * 0.6;
+    this.damageYOffset = options.damageYOffset ?? 0;
   }
 
   start() {
@@ -135,7 +135,6 @@ export class Uppercut extends Attack {
       damage: 13,
       damageWidth: PLAYER_WIDTH * 0.8,
       damageHeight: PLAYER_HEIGHT * 1.2,
-      damageYOffset: 0,
     });
   }
 
@@ -155,7 +154,6 @@ export class SquatLowKick extends Attack {
       nextMoveStep: 2,
       damage: 4,
       damageWidth: PLAYER_WIDTH * 1.2,
-      damageYOffset: 0,
     });
   }
 }

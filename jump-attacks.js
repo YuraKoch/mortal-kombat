@@ -49,8 +49,6 @@ export class ForwardJumpKick extends JumpAttack {
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_KICK,
       damage: 10,
-      damageWidth: PLAYER_WIDTH,
-      damageYOffset: 0,
     });
   }
 
@@ -65,8 +63,6 @@ export class BackwardJumpKick extends JumpAttack {
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_KICK,
       damage: 10,
-      damageWidth: PLAYER_WIDTH,
-      damageYOffset: 0,
     });
   }
 
@@ -81,8 +77,6 @@ export class ForwardJumpPunch extends JumpAttack {
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_PUNCH,
       damage: 8,
-      damageWidth: PLAYER_WIDTH,
-      damageYOffset: 0,
     });
   }
 
@@ -97,8 +91,6 @@ export class BackwardJumpPunch extends JumpAttack {
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_PUNCH,
       damage: 8,
-      damageWidth: PLAYER_WIDTH,
-      damageYOffset: 0,
     });
   }
 
