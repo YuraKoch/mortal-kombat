@@ -2,10 +2,6 @@ import { Move } from "./moves.js";
 import { PLAYER_BOTTOM, MOVE_TYPES, PLAYER_HEIGHT } from "./constants.js";
 
 class JumpMove extends Move {
-  constructor(options) {
-    super(options);
-  }
-
   start() {
     this.owner.height = PLAYER_HEIGHT / 2;
     super.start();

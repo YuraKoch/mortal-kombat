@@ -15,9 +15,9 @@ export class Move {
     this.nextMoveStep = options.nextMoveStep ?? 0;
   }
 
-  start(step = 0) {
+  start(startStep = 0) {
     this.isContinue = true;
-    this.currentStep = step;
+    this.currentStep = startStep;
     this.action();
     this.interval = setInterval(() => this.step(), this.stepDuration);
   }

@@ -28,11 +28,13 @@ import {
   SquatHighKick,
   SquatLowPunch,
   SpinKick,
+} from "./attacks.js";
+import {
   ForwardJumpKick,
   BackwardJumpKick,
   ForwardJumpPunch,
   BackwardJumpPunch,
-} from "./attacks.js";
+} from "./jump-attacks.js";
 
 const START_X_POSITION = {
   [ORIENTATIONS.LEFT]: 100,
@@ -128,7 +130,7 @@ export class Fighter {
     this.life = Math.max(this.life - damage, 0);
   }
 
-  setMove(newMoveType, step = 0) {
+  setMove(newMoveType, startStep = 0) {
     if (!(newMoveType in this.moves)) return;
     if (this.moveType === newMoveType) return;
 
@@ -149,7 +151,7 @@ export class Fighter {
 
     this.currentMove?.stop();
     this.currentMove = this.moves[newMoveType];
-    this.currentMove.start(step);
+    this.currentMove.start(startStep);
   }
 
   get moveType() {
