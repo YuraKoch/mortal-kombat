@@ -47,7 +47,6 @@ const JUMP_ATTACK_MOVE_TYPES = [MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWAR
 const INTERRUPTED_MOVE_TYPES = [MOVE_TYPES.STAND, MOVE_TYPES.WALK, MOVE_TYPES.WALK_BACKWARD, MOVE_TYPES.SQUAT, MOVE_TYPES.BLOCK];
 
 export class Fighter {
-  currentMove;
   life = 100;
   width = PLAYER_WIDTH;
   height = PLAYER_HEIGHT;
@@ -91,7 +90,8 @@ export class Fighter {
     this.moves[MOVE_TYPES.FALL] = new Fall(this);
     this.moves[MOVE_TYPES.WIN] = new Win(this);
 
-    this.setMove(MOVE_TYPES.STAND);
+    this.currentMove = this.moves[MOVE_TYPES.STAND];
+    this.currentMove.start();
   }
 
   isJumping() {
@@ -131,7 +131,6 @@ export class Fighter {
   }
 
   setMove(newMoveType, startStep = 0) {
-    if (!(newMoveType in this.moves)) return;
     if (this.moveType === newMoveType) return;
 
     if (GAME_OVER_MOVE_TYPES.includes(this.moveType)) return;
@@ -147,14 +146,14 @@ export class Fighter {
       return;
     }
 
-    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove?.isContinue) return;
+    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove.isContinue) return;
 
-    this.currentMove?.stop();
+    this.currentMove.stop();
     this.currentMove = this.moves[newMoveType];
     this.currentMove.start(startStep);
   }
 
   get moveType() {
-    return this.currentMove?.type;
+    return this.currentMove.type;
   }
 }
