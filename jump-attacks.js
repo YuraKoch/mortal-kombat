@@ -1,5 +1,5 @@
 import { Attack } from "./attacks.js";
-import { PLAYER_BOTTOM, MOVE_TYPES, PLAYER_HEIGHT, PLAYER_WIDTH } from "./constants.js";
+import { PLAYER_BOTTOM, MOVE_TYPES, PLAYER_HEIGHT } from "./constants.js";
 
 class JumpAttack extends Attack {
   start(jumpCurrentStep, jumpTotalSteps) {
@@ -31,7 +31,7 @@ class JumpAttack extends Attack {
     }
 
     this.owner.x += offsetX;
-    this.updateDamageRectangleXY();
+    this.updateDamageRectangle();
   }
 
   calculateNextStep() {

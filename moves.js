@@ -230,6 +230,13 @@ export class Fall extends Move {
       type: MOVE_TYPES.FALL,
     });
   }
+
+  calculateNextStep() {
+    this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
+  }
 }
 
 export class Win extends Move {
@@ -238,5 +245,12 @@ export class Win extends Move {
       owner,
       type: MOVE_TYPES.WIN,
     });
+  }
+
+  calculateNextStep() {
+    this.currentStep += 1;
+    if (this.currentStep >= this.totalSteps) {
+      this.currentStep = this.totalSteps - 1;
+    }
   }
 }
