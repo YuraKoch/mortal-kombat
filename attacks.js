@@ -91,6 +91,8 @@ export class Uppercut extends Attack {
     super({
       owner,
       type: MOVE_TYPES.UPPERCUT,
+      nextMoveType: MOVE_TYPES.SQUAT,
+      nextMoveStep: 2,
       damage: 13,
       damageWidth: PLAYER_WIDTH * 0.8,
       damageHeight: PLAYER_HEIGHT * 1.2,
