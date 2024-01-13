@@ -1,38 +1,38 @@
-import { MOVE_TYPES, ORIENTATIONS, IMAGE_COUNT_BY_MOVE_TYPE } from "./constants.js";
-
 export class ResourceManager {
   images = {};
+  limit = 20;
+  counter = 0;
 
-  async loadFighterImages(fighterName) {
-    this.images[fighterName] = {
-      [ORIENTATIONS.LEFT]: {},
-      [ORIENTATIONS.RIGHT]: {},
-    };
+  async loadImages(urls) {
+    const urlsToLoad = [...urls];
 
-    for (let moveName in MOVE_TYPES) {
-      const moveType = MOVE_TYPES[moveName];
-      this.images[fighterName][ORIENTATIONS.LEFT][moveType] = {};
-      await this.loadImages(fighterName, ORIENTATIONS.LEFT, moveType);
-      this.images[fighterName][ORIENTATIONS.RIGHT][moveType] = {};
-      await this.loadImages(fighterName, ORIENTATIONS.RIGHT, moveType);
+    while (urlsToLoad.length > 0) {
+      if (this.counter < this.limit) {
+        this.counter++;
+        const url = urlsToLoad.pop();
+        this.loadImage(url).then(() => {
+          this.counter--;
+        });
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
     }
   }
 
-  async loadImages(fighterName, orientation, moveType) {
-    const imagePromises = [];
-
-    const totalCount = IMAGE_COUNT_BY_MOVE_TYPE[moveType];
-    for (let i = 0; i < totalCount; i++) {
-      const img = new Image();
-      img.src = `./images/fighters/${fighterName}/${orientation}/${moveType}/${i}.png`;
-      this.images[fighterName][orientation][moveType][i] = img;
-      imagePromises.push(new Promise(resolve => img.onload = resolve));
-    }
-
-    await Promise.all(imagePromises);
+  async loadImage(url) {
+    const img = new Image();
+    img.src = url;
+    this.images[url] = img;
+    await new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = () => {
+        console.warn(`Error loading image at URL: ${url}. Retrying...`);
+        this.loadImage(url).then(resolve);
+      };
+    });
   };
 
-  getImage(fighterName, orientation, moveType, index) {
-    return this.images[fighterName][orientation][moveType][index];
+  getImage(url) {
+    return this.images[url];
   }
 }

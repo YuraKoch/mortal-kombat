@@ -1,4 +1,4 @@
-import { ARENA, ORIENTATIONS } from "./constants.js";
+import { ARENA, ORIENTATIONS, MOVE_TYPES, IMAGE_COUNT_BY_MOVE_TYPE } from "./constants.js";
 import { Fighter } from "./fighters.js";
 import { ResourceManager } from "./resource-manager.js";
 import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
@@ -24,12 +24,24 @@ export class Game {
   async initializeFighters() {
     this.fighters[0] = new Fighter('subzero', ORIENTATIONS.LEFT);
     this.fighters[1] = new Fighter('kano', ORIENTATIONS.RIGHT);
-
-    await this.resourceManager.loadFighterImages(this.fighters[0].name);
-    await this.resourceManager.loadFighterImages(this.fighters[1].name);
-
+    await this.loadFighterImages();
     this.fighters[0].init();
     this.fighters[1].init();
+  }
+
+  async loadFighterImages() {
+    const urls = [];
+    for (let moveName in MOVE_TYPES) {
+      const moveType = MOVE_TYPES[moveName];
+      for (let i = 0; i < IMAGE_COUNT_BY_MOVE_TYPE[moveType]; i++) {
+        urls.push(`./images/fighters/${this.fighters[0].name}/${ORIENTATIONS.LEFT}/${moveType}/${i}.png`);
+        urls.push(`./images/fighters/${this.fighters[0].name}/${ORIENTATIONS.RIGHT}/${moveType}/${i}.png`);
+        urls.push(`./images/fighters/${this.fighters[1].name}/${ORIENTATIONS.LEFT}/${moveType}/${i}.png`);
+        urls.push(`./images/fighters/${this.fighters[1].name}/${ORIENTATIONS.RIGHT}/${moveType}/${i}.png`);
+      }
+    }
+
+    await this.resourceManager.loadImages(urls);
   }
 
   initCanvas() {

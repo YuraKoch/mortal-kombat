@@ -28,12 +28,8 @@ export function runDrawSystem(fighter1, fighter2, context, resourceManager) {
 
 function drawFighter(fighter, context, resourceManager) {
   const currentImg = resourceManager.getImage(
-    fighter.name,
-    fighter.orientation,
-    fighter.moveType,
-    fighter.currentMove.currentStep
+    `./images/fighters/${fighter.name}/${fighter.orientation}/${fighter.moveType}/${fighter.currentMove.currentStep}.png`
   );
-
   let x;
   if (GAME_OVER_MOVE_TYPES.includes(fighter.moveType)) {
     x = fighter.orientation === ORIENTATIONS.LEFT
