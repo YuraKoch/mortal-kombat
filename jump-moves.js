@@ -1,6 +1,9 @@
 import { Move } from "./moves.js";
 import { PLAYER_BOTTOM, MOVE_TYPES, PLAYER_HEIGHT } from "./constants.js";
 
+const DELTA_X = 23;
+const DELTA_Y = 25;
+
 class JumpMove extends Move {
   start() {
     this.owner.height = PLAYER_HEIGHT / 2;
@@ -14,9 +17,9 @@ class JumpMove extends Move {
     if (this.currentStep === 1) {
       this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
     } else if (this.currentStep < this.totalSteps / 2) {
-      this.owner.y -= 25;
+      this.owner.y -= DELTA_Y;
     } else {
-      this.owner.y += 25;
+      this.owner.y += DELTA_Y;
     }
   }
 }
@@ -40,7 +43,7 @@ export class ForwardJump extends JumpMove {
 
   action() {
     super.action();
-    this.owner.x += 23;
+    this.owner.x += DELTA_X;
   }
 }
 
@@ -54,6 +57,6 @@ export class BackwardJump extends JumpMove {
 
   action() {
     super.action();
-    this.owner.x -= 23;
+    this.owner.x -= DELTA_X;
   }
 }

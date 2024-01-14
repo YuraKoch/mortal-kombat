@@ -1,6 +1,9 @@
 import { Attack } from "./attacks.js";
 import { PLAYER_BOTTOM, MOVE_TYPES, PLAYER_HEIGHT } from "./constants.js";
 
+const DELTA_X = 23;
+const DELTA_Y = 25;
+
 class JumpAttack extends Attack {
   start(jumpCurrentStep, jumpTotalSteps) {
     this.owner.height = PLAYER_HEIGHT / 2;
@@ -13,24 +16,22 @@ class JumpAttack extends Attack {
     return this.jumpCurrentStep >= this.jumpTotalSteps;
   }
 
-  action(offsetX, offsetY = 0) {
+  action(deltaX, additionalOffsetY = 0) {
     super.action();
 
     if (this.jumpCurrentStep === 0) {
-      this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9 + 25;
-    } else if (this.jumpCurrentStep === 1) {
       this.owner.y = PLAYER_BOTTOM - PLAYER_HEIGHT * 0.9;
     } else if (this.jumpCurrentStep < this.jumpTotalSteps / 2) {
-      this.owner.y -= 25;
+      this.owner.y -= DELTA_Y;
     } else {
-      this.owner.y += 25;
+      this.owner.y += DELTA_Y;
     }
 
     if (this.currentStep === 0) {
-      this.owner.y += offsetY;
+      this.owner.y += additionalOffsetY;
     }
 
-    this.owner.x += offsetX;
+    this.owner.x += deltaX;
     this.updateDamageRectangle();
   }
 
@@ -48,12 +49,14 @@ export class ForwardJumpKick extends JumpAttack {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_KICK,
+      stepDuration: 80,
       damage: 10,
     });
   }
 
   action() {
-    super.action(23, PLAYER_HEIGHT * 0.1);
+    const additionalOffsetY = PLAYER_HEIGHT * 0.1;
+    super.action(DELTA_X, additionalOffsetY);
   }
 }
 
@@ -62,12 +65,14 @@ export class BackwardJumpKick extends JumpAttack {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_KICK,
+      stepDuration: 80,
       damage: 10,
     });
   }
 
   action() {
-    super.action(-23, PLAYER_HEIGHT * 0.1);
+    const additionalOffsetY = PLAYER_HEIGHT * 0.1;
+    super.action(-1 * DELTA_X, additionalOffsetY);
   }
 }
 
@@ -76,12 +81,14 @@ export class ForwardJumpPunch extends JumpAttack {
     super({
       owner,
       type: MOVE_TYPES.FORWARD_JUMP_PUNCH,
+      stepDuration: 80,
       damage: 8,
     });
   }
 
   action() {
-    super.action(23, PLAYER_HEIGHT * 0.25);
+    const additionalOffsetY = PLAYER_HEIGHT * 0.25;
+    super.action(DELTA_X, additionalOffsetY);
   }
 }
 
@@ -90,11 +97,13 @@ export class BackwardJumpPunch extends JumpAttack {
     super({
       owner,
       type: MOVE_TYPES.BACKWARD_JUMP_PUNCH,
+      stepDuration: 80,
       damage: 8,
     });
   }
 
   action() {
-    super.action(-23, PLAYER_HEIGHT * 0.25);
+    const additionalOffsetY = PLAYER_HEIGHT * 0.25;
+    super.action(-1 * DELTA_X, additionalOffsetY);
   }
 }

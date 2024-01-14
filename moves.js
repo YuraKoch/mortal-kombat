@@ -69,6 +69,8 @@ export class Stand extends Move {
   }
 }
 
+const WALK_DELTA_X = 10;
+
 export class Walk extends Move {
   constructor(owner) {
     super({
@@ -82,7 +84,7 @@ export class Walk extends Move {
   }
 
   action() {
-    this.owner.x += 10;
+    this.owner.x += WALK_DELTA_X;
   }
 
   calculateNextStep() {
@@ -104,7 +106,7 @@ export class WalkBackward extends Move {
   }
 
   action() {
-    this.owner.x -= 10;
+    this.owner.x -= WALK_DELTA_X;
   }
 
   calculateNextStep() {
