@@ -1,6 +1,8 @@
 export class ResourceManager {
-  images = {};
-  limit = 20;
+  constructor(limit = 20) {
+    this.images = {};
+    this.limit = limit;
+  }
 
   async loadImages(urls) {
     const urlsToLoad = [...urls];
@@ -24,10 +26,7 @@ export class ResourceManager {
     this.images[url] = img;
     await new Promise(resolve => {
       img.onload = resolve;
-      img.onerror = () => {
-        console.warn(`Error loading image at URL: ${url}. Retrying...`);
-        this.loadImage(url).then(resolve);
-      };
+      img.onerror = () => this.loadImage(url).then(resolve);
     });
   };
 
