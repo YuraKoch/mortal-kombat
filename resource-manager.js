@@ -1,23 +1,22 @@
 export class ResourceManager {
   images = {};
   limit = 20;
-  counter = 0;
 
   async loadImages(urls) {
     const urlsToLoad = [...urls];
-
-    while (urlsToLoad.length > 0) {
-      if (this.counter < this.limit) {
-        this.counter++;
-        const url = urlsToLoad.pop();
-        this.loadImage(url).then(() => {
-          this.counter--;
-        });
-      } else {
-        await new Promise(resolve => setTimeout(resolve, 10));
-      }
+    const promises = [];
+    for (let i = 0; i < this.limit; i++) {
+      promises.push(this.loadNextImage(urlsToLoad));
     }
+    await Promise.all(promises);
   }
+
+  async loadNextImage(urlsToLoad) {
+    if (urlsToLoad.length === 0) return;
+    const url = urlsToLoad.pop();
+    await this.loadImage(url);
+    await this.loadNextImage(urlsToLoad);
+  };
 
   async loadImage(url) {
     const img = new Image();
