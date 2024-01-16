@@ -59,7 +59,7 @@ export class Fighter {
     this.y = PLAYER_BOTTOM;
   }
 
-  async init() {
+  init() {
     this.moves = {};
     this.moves[MOVE_TYPES.STAND] = new Stand(this);
     this.moves[MOVE_TYPES.WALK] = new Walk(this);
