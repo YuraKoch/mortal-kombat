@@ -59,7 +59,6 @@ export class Stand extends Move {
 
   start() {
     this.owner.height = PLAYER_HEIGHT;
-    this.owner.y = PLAYER_BOTTOM;
     super.start();
   }
 
@@ -70,17 +69,12 @@ export class Stand extends Move {
 }
 
 const WALK_DELTA_X = 10;
-
 export class Walk extends Move {
   constructor(owner) {
     super({
       owner: owner,
       type: MOVE_TYPES.WALK,
     });
-  }
-
-  start() {
-    super.start();
   }
 
   action() {
@@ -99,10 +93,6 @@ export class WalkBackward extends Move {
       owner: owner,
       type: MOVE_TYPES.WALK_BACKWARD,
     });
-  }
-
-  start() {
-    super.start();
   }
 
   action() {
@@ -161,10 +151,6 @@ export class Block extends Move {
     });
   }
 
-  start(step) {
-    super.start(step);
-  }
-
   calculateNextStep() {
     this.currentStep += 1;
     if (this.currentStep >= this.totalSteps) {
@@ -193,6 +179,7 @@ export class SquatEndure extends Move {
   }
 }
 
+const KNOCK_DOWN_DELTA_X = 15;
 export class KnockDown extends Move {
   constructor(owner) {
     super({
@@ -204,9 +191,9 @@ export class KnockDown extends Move {
 
   action() {
     if (this.owner.orientation === ORIENTATIONS.LEFT) {
-      this.owner.x -= 15;
+      this.owner.x -= KNOCK_DOWN_DELTA_X;
     } else {
-      this.owner.x += 15;
+      this.owner.x += KNOCK_DOWN_DELTA_X;
     }
   }
 }
