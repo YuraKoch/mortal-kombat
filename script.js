@@ -1,7 +1,8 @@
 import { Game } from "./game.js";
 
 async function startNewGame() {
-  await new Game().init();
+  const game = new Game();
+  await game.init();
   document.querySelector('.loading').style.display = 'none';
 }
 
