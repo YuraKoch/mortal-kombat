@@ -51,7 +51,7 @@ body {
 
 .lifebar {
     position: relative;
-    width: 200px;
+    width: 35%;
     height: 19px;
     display: flex;
     background-color: red;
@@ -60,12 +60,12 @@ body {
 }
 
 .lifebar.left {
-    margin-left: 30px;
+    margin-left: 5%;
     justify-content: left;
 }
 
 .lifebar.right {
-    margin-right: 30px;
+    margin-right: 5%;
     justify-content: right;
 }
 
