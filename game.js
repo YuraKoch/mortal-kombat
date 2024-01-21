@@ -1,13 +1,13 @@
 import { ARENA, ORIENTATIONS, MOVE_TYPES, IMAGE_COUNT_BY_MOVE_TYPE } from "./constants.js";
 import { Fighter } from "./fighters.js";
 import { ResourceManager } from "./resource-manager.js";
-import { runFightersPositionAjustmentSystem } from "./systems/fighters-position-ajustment-system.js";
-import { runFightersAttackSystem } from "./systems/fighters-attack-system.js";
-import { runFightersLifeSystem } from "./systems/fighters-life-system.js";
-import { runLifebarsSystem } from "./systems/lifebars-system.js";
-import { runFightersMovementSystem } from "./systems/fighters-movement-system.js";
-import { runFightersHoldMovementSystem } from "./systems/fighters-hold-movement-system.js";
-import { runDrawSystem } from "./systems/draw-system.js";
+import { recalculatePositions } from "./recalculate-positions.js";
+import { checkAttacks } from "./check-attacks.js";
+import { checkLifes } from "./check-lifes.js";
+import { updateLifebars } from "./update-lifebars.js";
+import { setMovements } from "./set-movements.js";
+import { setHoldMovements } from "./set-hold-movements.js";
+import { draw } from "./draw.js";
 
 export class Game {
   pressed = {};
@@ -31,8 +31,8 @@ export class Game {
 
   async loadFighterImages() {
     const urls = [];
-    for (let moveName in MOVE_TYPES) {
-      const moveType = MOVE_TYPES[moveName];
+    for (let moveKey in MOVE_TYPES) {
+      const moveType = MOVE_TYPES[moveKey];
       for (let i = 0; i < IMAGE_COUNT_BY_MOVE_TYPE[moveType]; i++) {
         urls.push(`./images/fighters/${this.fighters[0].name}/${ORIENTATIONS.LEFT}/${moveType}/${i}.png`);
         urls.push(`./images/fighters/${this.fighters[0].name}/${ORIENTATIONS.RIGHT}/${moveType}/${i}.png`);
@@ -55,23 +55,23 @@ export class Game {
     document.addEventListener('keydown', event => {
       if (!this.pressed[event.code]) {
         this.pressed[event.code] = true;
-        runFightersMovementSystem(this.fighters[0], this.fighters[1], this.pressed);
+        setMovements(this.fighters[0], this.fighters[1], this.pressed);
       }
     });
     document.addEventListener('keyup', event => {
       delete this.pressed[event.code];
-      runFightersMovementSystem(this.fighters[0], this.fighters[1], this.pressed);
+      setMovements(this.fighters[0], this.fighters[1], this.pressed);
     });
   }
 
   animate() {
-    runFightersHoldMovementSystem(this.fighters[0], this.fighters[1], this.pressed);
-    runFightersPositionAjustmentSystem(this.fighters[0], this.fighters[1]);
-    runFightersAttackSystem(this.fighters[0], this.fighters[1]);
-    runFightersLifeSystem(this.fighters[0], this.fighters[1]);
-    runLifebarsSystem(this.fighters[0], this.fighters[1]);
+    setHoldMovements(this.fighters[0], this.fighters[1], this.pressed);
+    recalculatePositions(this.fighters[0], this.fighters[1]);
+    checkAttacks(this.fighters[0], this.fighters[1]);
+    checkLifes(this.fighters[0], this.fighters[1]);
+    updateLifebars(this.fighters[0], this.fighters[1]);
 
-    runDrawSystem(this.fighters[0], this.fighters[1], this.context, this.resourceManager);
+    draw(this.fighters[0], this.fighters[1], this.context, this.resourceManager);
 
     requestAnimationFrame(() => this.animate());
   }

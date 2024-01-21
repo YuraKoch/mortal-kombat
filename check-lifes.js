@@ -1,6 +1,6 @@
-import { MOVE_TYPES } from "../constants.js";
+import { MOVE_TYPES } from "./constants.js";
 
-export function runFightersLifeSystem(fighter1, fighter2) {
+export function checkLifes(fighter1, fighter2) {
   checkFighterLife(fighter1, fighter2);
   checkFighterLife(fighter2, fighter1);
 }

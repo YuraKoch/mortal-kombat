@@ -103,7 +103,6 @@ export class Fighter {
   }
 
   isMoving() {
-    if (!this.currentMove) return false;
     return [
       MOVE_TYPES.WALK,
       MOVE_TYPES.WALK_BACKWARD,
@@ -146,7 +145,7 @@ export class Fighter {
       return;
     }
 
-    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove.isContinue) return;
+    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove.isContinue && !GAME_OVER_MOVE_TYPES.includes(newMoveType)) return;
 
     this.currentMove.stop();
     this.currentMove = this.moves[newMoveType];

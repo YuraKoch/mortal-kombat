@@ -1,6 +1,6 @@
-import { MOVE_TYPES, KEYS } from "../constants.js";
+import { MOVE_TYPES, KEYS } from "./constants.js";
 
-export function runFightersHoldMovementSystem(fighter1, fighter2, pressed) {
+export function setHoldMovements(fighter1, fighter2, pressed) {
   const fighter1NextMoveType = getHoldMoveFromCombination(KEYS[0], pressed);
   fighter1.setMove(fighter1NextMoveType);
   const fighter2NextMoveType = getHoldMoveFromCombination(KEYS[1], pressed);

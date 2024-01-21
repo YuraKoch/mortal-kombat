@@ -1,11 +1,11 @@
-import { ARENA, ORIENTATIONS } from "../constants.js";
+import { ARENA, ORIENTATIONS } from "./constants.js";
 
-export function runFightersPositionAjustmentSystem(fighter1, fighter2) {
-  adjustFighterPosition(fighter1, fighter2);
-  adjustFighterPosition(fighter2, fighter1);
+export function recalculatePositions(fighter1, fighter2) {
+  recalculateFighterPosition(fighter1, fighter2);
+  recalculateFighterPosition(fighter2, fighter1);
 }
 
-function adjustFighterPosition(fighter, opponent) {
+function recalculateFighterPosition(fighter, opponent) {
   if (fighter.x <= fighter.width / 2) {
     fighter.x = fighter.width / 2;
     return;

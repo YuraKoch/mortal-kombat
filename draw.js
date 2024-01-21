@@ -1,8 +1,8 @@
-import { ARENA, ORIENTATIONS, MOVE_TYPES } from "../constants.js";
+import { ARENA, ORIENTATIONS, MOVE_TYPES } from "./constants.js";
 
 const GAME_OVER_MOVE_TYPES = [MOVE_TYPES.WIN, MOVE_TYPES.FALL];
 
-export function runDrawSystem(fighter1, fighter2, context, resourceManager) {
+export function draw(fighter1, fighter2, context, resourceManager) {
   context.clearRect(0, 0, ARENA.WIDTH, ARENA.HEIGHT);
   drawFighter(fighter1, context, resourceManager);
   drawFighter(fighter2, context, resourceManager);
