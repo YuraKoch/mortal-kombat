@@ -15,10 +15,17 @@ export class Game {
   resourceManager = new ResourceManager();
 
   async init() {
-    await this.initializeFighters();
     this.initCanvas();
+    await this.initializeFighters();
     this.addHandlers();
     this.animate();
+  }
+
+  initCanvas() {
+    const canvas = document.getElementById('canvas');
+    canvas.width = ARENA.WIDTH;
+    canvas.height = ARENA.HEIGHT;
+    this.context = canvas.getContext('2d');
   }
 
   async initializeFighters() {
@@ -42,13 +49,6 @@ export class Game {
     }
 
     await this.resourceManager.loadImages(urls);
-  }
-
-  initCanvas() {
-    const canvas = document.getElementById('canvas');
-    canvas.width = ARENA.WIDTH;
-    canvas.height = ARENA.HEIGHT;
-    this.context = canvas.getContext('2d');
   }
 
   addHandlers() {
