@@ -32,8 +32,6 @@ export class Game {
     this.fighters[0] = new Fighter('subzero', ORIENTATIONS.LEFT);
     this.fighters[1] = new Fighter('kano', ORIENTATIONS.RIGHT);
     await this.loadFighterImages();
-    this.fighters[0].init();
-    this.fighters[1].init();
   }
 
   async loadFighterImages() {

@@ -57,9 +57,10 @@ export class Fighter {
     this.orientation = orientation;
     this.x = START_X_POSITION[orientation]; // center of player
     this.y = PLAYER_BOTTOM;
+    this.initMoves();
   }
 
-  init() {
+  initMoves() {
     this.moves = {};
     this.moves[MOVE_TYPES.STAND] = new Stand(this);
     this.moves[MOVE_TYPES.WALK] = new Walk(this);
