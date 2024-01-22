@@ -25,9 +25,8 @@ export function draw(fighter1, fighter2, context, resourceManager) {
 }
 
 function drawFighter(fighter, context, resourceManager) {
-  const currentImg = resourceManager.getImage(
-    `./images/fighters/${fighter.name}/${fighter.orientation}/${fighter.moveType}/${fighter.currentMove.currentStep}.png`
-  );
+  const url = `./images/fighters/${fighter.name}/${fighter.orientation}/${fighter.moveType}/${fighter.currentMove.currentStep}.png`;
+  const currentImg = resourceManager.getImage(url);
 
   let x;
   if (fighter.moveType === MOVE_TYPES.WIN) {

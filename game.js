@@ -1,5 +1,6 @@
 import { ARENA, ORIENTATIONS, MOVE_TYPES, IMAGE_COUNT_BY_MOVE_TYPE } from "./constants.js";
 import { Fighter } from "./fighters.js";
+import { draw } from "./draw.js";
 import { ResourceManager } from "./resource-manager.js";
 import { recalculatePositions } from "./recalculate-positions.js";
 import { checkAttacks } from "./check-attacks.js";
@@ -7,7 +8,6 @@ import { checkLifes } from "./check-lifes.js";
 import { updateLifebars } from "./update-lifebars.js";
 import { setMovements } from "./set-movements.js";
 import { setHoldMovements } from "./set-hold-movements.js";
-import { draw } from "./draw.js";
 
 export class Game {
   pressed = {};
