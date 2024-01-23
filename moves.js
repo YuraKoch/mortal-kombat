@@ -1,11 +1,6 @@
 import { PLAYER_BOTTOM, MOVE_TYPES, IMAGE_COUNT_BY_MOVE_TYPE, ORIENTATIONS, PLAYER_HEIGHT } from "./constants.js";
 
 export class Move {
-  currentStep = 0;
-  isContinue = false;
-  interval;
-  totalSteps;
-
   constructor(options) {
     this.owner = options.owner;
     this.type = options.type;
@@ -63,7 +58,7 @@ export class Stand extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     this.currentStep = this.currentStep % this.totalSteps;
   }
 }
@@ -82,7 +77,7 @@ export class Walk extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     this.currentStep = this.currentStep % this.totalSteps;
   }
 }
@@ -100,7 +95,7 @@ export class WalkBackward extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     this.currentStep = this.currentStep % this.totalSteps;
   }
 }
@@ -120,7 +115,7 @@ export class Squat extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     if (this.currentStep >= this.totalSteps) {
       this.currentStep = this.totalSteps - 1;
     }
@@ -152,7 +147,7 @@ export class Block extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     if (this.currentStep >= this.totalSteps) {
       this.currentStep = this.totalSteps - 1;
     }
@@ -221,7 +216,7 @@ export class Fall extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     if (this.currentStep >= this.totalSteps) {
       this.currentStep = this.totalSteps - 1;
     }
@@ -237,7 +232,7 @@ export class Win extends Move {
   }
 
   calculateNextStep() {
-    this.currentStep += 1;
+    super.calculateNextStep();
     if (this.currentStep >= this.totalSteps) {
       this.currentStep = this.totalSteps - 1;
     }
