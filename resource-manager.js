@@ -1,9 +1,8 @@
 export class ResourceManager {
-  urlsToLoad = [];
-
   constructor(limit = 20) {
     this.images = {};
     this.limit = limit;
+    this.urlsToLoad = [];
   }
 
   async loadImages(urls) {
