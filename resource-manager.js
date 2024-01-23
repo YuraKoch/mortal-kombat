@@ -1,23 +1,25 @@
 export class ResourceManager {
+  urlsToLoad = [];
+
   constructor(limit = 20) {
     this.images = {};
     this.limit = limit;
   }
 
   async loadImages(urls) {
-    const urlsToLoad = [...urls];
+    this.urlsToLoad = [...urls];
     const promises = [];
     for (let i = 0; i < this.limit; i++) {
-      promises.push(this.loadNextImage(urlsToLoad));
+      promises.push(this.loadNextImage());
     }
     await Promise.all(promises);
   }
 
-  async loadNextImage(urlsToLoad) {
-    if (urlsToLoad.length === 0) return;
-    const url = urlsToLoad.pop();
+  async loadNextImage() {
+    if (this.urlsToLoad.length === 0) return;
+    const url = this.urlsToLoad.pop();
     await this.loadImage(url);
-    await this.loadNextImage(urlsToLoad);
+    await this.loadNextImage();
   };
 
   async loadImage(url) {
