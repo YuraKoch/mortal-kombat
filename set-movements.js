@@ -18,9 +18,9 @@ function getMoveFromCombination(fighter, keys, pressed) {
   if (pressed[keys.LP] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_PUNCH;
 
   if (pressed[keys.LEFT] && pressed[keys.UP]) return MOVE_TYPES.BACKWARD_JUMP;
-  if (pressed[keys.LEFT] && pressed[keys.HK] && fighter.orientation === ORIENTATIONS.LEFT) return MOVE_TYPES.SPIN_KICK;
-
   if (pressed[keys.RIGHT] && pressed[keys.UP]) return MOVE_TYPES.FORWARD_JUMP;
+
+  if (pressed[keys.LEFT] && pressed[keys.HK] && fighter.orientation === ORIENTATIONS.LEFT) return MOVE_TYPES.SPIN_KICK;
   if (pressed[keys.RIGHT] && pressed[keys.HK] && fighter.orientation === ORIENTATIONS.RIGHT) return MOVE_TYPES.SPIN_KICK;
 
   if (pressed[keys.DOWN] && pressed[keys.HP]) return MOVE_TYPES.UPPERCUT;
