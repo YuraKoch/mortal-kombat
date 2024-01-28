@@ -41,7 +41,6 @@ function getMoveFromCombination(fighter, keys, pressed) {
   if (pressed[keys.UP]) return MOVE_TYPES.JUMP;
 
   if (fighter.moveType === MOVE_TYPES.SQUAT && !pressed[keys.DOWN]) return MOVE_TYPES.STAND_UP;
-  if (fighter.moveType === MOVE_TYPES.BLOCK && !pressed[keys.BLOCK]) return MOVE_TYPES.STAND;
 
   return MOVE_TYPES.STAND;
 }
