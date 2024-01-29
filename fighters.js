@@ -75,13 +75,13 @@ export class Fighter {
     this.moves[MOVE_TYPES.LOW_KICK] = new LowKick(this);
     this.moves[MOVE_TYPES.HIGH_PUNCH] = new HighPunch(this);
     this.moves[MOVE_TYPES.LOW_PUNCH] = new LowPunch(this);
+    this.moves[MOVE_TYPES.UPPERCUT] = new Uppercut(this);
     this.moves[MOVE_TYPES.SQUAT_LOW_KICK] = new SquatLowKick(this);
     this.moves[MOVE_TYPES.SQUAT_HIGH_KICK] = new SquatHighKick(this);
     this.moves[MOVE_TYPES.SQUAT_LOW_PUNCH] = new SquatLowPunch(this);
+    this.moves[MOVE_TYPES.SPIN_KICK] = new SpinKick(this);
     this.moves[MOVE_TYPES.ENDURE] = new Endure(this);
     this.moves[MOVE_TYPES.SQUAT_ENDURE] = new SquatEndure(this);
-    this.moves[MOVE_TYPES.UPPERCUT] = new Uppercut(this);
-    this.moves[MOVE_TYPES.SPIN_KICK] = new SpinKick(this);
     this.moves[MOVE_TYPES.KNOCK_DOWN] = new KnockDown(this);
     this.moves[MOVE_TYPES.ATTRACTIVE_STAND_UP] = new AttractiveStandUp(this);
     this.moves[MOVE_TYPES.FORWARD_JUMP_KICK] = new ForwardJumpKick(this);
