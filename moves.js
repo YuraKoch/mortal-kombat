@@ -146,6 +146,11 @@ export class Block extends Move {
     });
   }
 
+  start() {
+    this.owner.height = PLAYER_HEIGHT;
+    super.start();
+  }
+
   calculateNextStep() {
     super.calculateNextStep();
     if (this.currentStep >= this.totalSteps) {
