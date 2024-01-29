@@ -9,12 +9,12 @@ export function setMovements(fighter1, fighter2, pressed) {
 
 function getMoveFromCombination(fighter, keys, pressed) {
   if (pressed[keys.HK] && fighter.moveType === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_KICK;
-  if (pressed[keys.HK] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_KICK;
   if (pressed[keys.LK] && fighter.moveType === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_KICK;
+  if (pressed[keys.HK] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_KICK;
   if (pressed[keys.LK] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_KICK;
   if (pressed[keys.HP] && fighter.moveType === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_PUNCH;
-  if (pressed[keys.HP] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_PUNCH;
   if (pressed[keys.LP] && fighter.moveType === MOVE_TYPES.FORWARD_JUMP) return MOVE_TYPES.FORWARD_JUMP_PUNCH;
+  if (pressed[keys.HP] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_PUNCH;
   if (pressed[keys.LP] && fighter.moveType === MOVE_TYPES.BACKWARD_JUMP) return MOVE_TYPES.BACKWARD_JUMP_PUNCH;
 
   if (pressed[keys.LEFT] && pressed[keys.UP]) return MOVE_TYPES.BACKWARD_JUMP;

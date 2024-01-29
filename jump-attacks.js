@@ -16,7 +16,7 @@ class JumpAttack extends Attack {
     return this.jumpCurrentStep >= this.jumpTotalSteps;
   }
 
-  action(deltaX, additionalOffsetY = 0) {
+  action(deltaX) {
     super.action();
 
     if (this.jumpCurrentStep === 0) {
@@ -25,10 +25,6 @@ class JumpAttack extends Attack {
       this.owner.y -= DELTA_Y;
     } else {
       this.owner.y += DELTA_Y;
-    }
-
-    if (this.currentStep === 0) {
-      this.owner.y += additionalOffsetY;
     }
 
     this.owner.x += deltaX;
@@ -55,8 +51,7 @@ export class ForwardJumpKick extends JumpAttack {
   }
 
   action() {
-    const additionalOffsetY = PLAYER_HEIGHT * 0.1;
-    super.action(DELTA_X, additionalOffsetY);
+    super.action(DELTA_X);
   }
 }
 
@@ -71,8 +66,7 @@ export class BackwardJumpKick extends JumpAttack {
   }
 
   action() {
-    const additionalOffsetY = PLAYER_HEIGHT * 0.1;
-    super.action(-1 * DELTA_X, additionalOffsetY);
+    super.action(-1 * DELTA_X);
   }
 }
 
@@ -87,8 +81,7 @@ export class ForwardJumpPunch extends JumpAttack {
   }
 
   action() {
-    const additionalOffsetY = PLAYER_HEIGHT * 0.25;
-    super.action(DELTA_X, additionalOffsetY);
+    super.action(DELTA_X);
   }
 }
 
@@ -103,7 +96,6 @@ export class BackwardJumpPunch extends JumpAttack {
   }
 
   action() {
-    const additionalOffsetY = PLAYER_HEIGHT * 0.25;
-    super.action(-1 * DELTA_X, additionalOffsetY);
+    super.action(-1 * DELTA_X);
   }
 }
