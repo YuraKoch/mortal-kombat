@@ -66,8 +66,8 @@ export class Game {
     setHoldMovements(this.fighters[0], this.fighters[1], this.pressed);
     recalculatePositions(this.fighters[0], this.fighters[1]);
     checkAttacks(this.fighters[0], this.fighters[1]);
-    checkLifes(this.fighters[0], this.fighters[1]);
     updateLifebars(this.fighters[0], this.fighters[1]);
+    checkLifes(this.fighters[0], this.fighters[1]);
 
     draw(this.fighters[0], this.fighters[1], this.context, this.resourceManager);
 
