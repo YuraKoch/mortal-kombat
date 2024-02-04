@@ -6,7 +6,7 @@ export function checkLifes(fighter1, fighter2) {
 }
 
 function checkFighterLife(fighter, opponent) {
-  if (fighter.life === 0 && fighter.moveType !== MOVE_TYPES.FALL) {
+  if (fighter.life === 0) {
     opponent.setMove(MOVE_TYPES.WIN);
     fighter.setMove(MOVE_TYPES.FALL);
   }

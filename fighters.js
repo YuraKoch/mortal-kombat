@@ -42,9 +42,10 @@ const START_X_POSITION = {
 };
 const BLOCK_DAMAGE = 0.2;
 
-const GAME_OVER_MOVE_TYPES = [MOVE_TYPES.WIN, MOVE_TYPES.FALL];
-const JUMP_ATTACK_MOVE_TYPES = [MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWARD_JUMP_KICK, MOVE_TYPES.FORWARD_JUMP_PUNCH, MOVE_TYPES.BACKWARD_JUMP_PUNCH];
 const INTERRUPTED_MOVE_TYPES = [MOVE_TYPES.STAND, MOVE_TYPES.WALK, MOVE_TYPES.WALK_BACKWARD, MOVE_TYPES.SQUAT, MOVE_TYPES.BLOCK];
+const JUMP_ATTACK_MOVE_TYPES = [MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWARD_JUMP_KICK, MOVE_TYPES.FORWARD_JUMP_PUNCH, MOVE_TYPES.BACKWARD_JUMP_PUNCH];
+const JUMP_MOVE_TYPES = [MOVE_TYPES.JUMP, MOVE_TYPES.BACKWARD_JUMP, MOVE_TYPES.FORWARD_JUMP];
+const MOVING_MOVE_TYPES = [MOVE_TYPES.WALK, MOVE_TYPES.WALK_BACKWARD, MOVE_TYPES.BACKWARD_JUMP, MOVE_TYPES.FORWARD_JUMP, MOVE_TYPES.FORWARD_JUMP_KICK, MOVE_TYPES.BACKWARD_JUMP_KICK, MOVE_TYPES.FORWARD_JUMP_PUNCH, MOVE_TYPES.BACKWARD_JUMP_PUNCH];
 
 export class Fighter {
   life = 100;
@@ -96,24 +97,15 @@ export class Fighter {
   }
 
   isJumping() {
-    return [
-      MOVE_TYPES.JUMP,
-      MOVE_TYPES.BACKWARD_JUMP,
-      MOVE_TYPES.FORWARD_JUMP,
-    ].includes(this.currentMove.type);
+    return JUMP_MOVE_TYPES.includes(this.currentMove.type);
+  }
+
+  isJumpingAttack() {
+    return JUMP_ATTACK_MOVE_TYPES.includes(this.currentMove.type);
   }
 
   isMoving() {
-    return [
-      MOVE_TYPES.WALK,
-      MOVE_TYPES.WALK_BACKWARD,
-      MOVE_TYPES.BACKWARD_JUMP,
-      MOVE_TYPES.FORWARD_JUMP,
-      MOVE_TYPES.FORWARD_JUMP_KICK,
-      MOVE_TYPES.BACKWARD_JUMP_KICK,
-      MOVE_TYPES.FORWARD_JUMP_PUNCH,
-      MOVE_TYPES.BACKWARD_JUMP_PUNCH,
-    ].includes(this.currentMove.type);
+    return MOVING_MOVE_TYPES.includes(this.currentMove.type);
   }
 
   endureAttack(damage, attackType) {
@@ -133,8 +125,6 @@ export class Fighter {
   setMove(newMoveType, startStep = 0) {
     if (this.moveType === newMoveType) return;
 
-    if (GAME_OVER_MOVE_TYPES.includes(this.moveType)) return;
-
     if (JUMP_ATTACK_MOVE_TYPES.includes(newMoveType)) {
       const jumpCurrentStep = this.currentMove.currentStep;
       const jumpTotalSteps = this.currentMove.totalSteps;
@@ -146,7 +136,7 @@ export class Fighter {
       return;
     }
 
-    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove.isContinue && !GAME_OVER_MOVE_TYPES.includes(newMoveType)) return;
+    if (!INTERRUPTED_MOVE_TYPES.includes(this.moveType) && this.currentMove.isContinue) return;
 
     this.currentMove.stop();
     this.currentMove = this.moves[newMoveType];

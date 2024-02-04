@@ -16,23 +16,26 @@ function recalculateFighterPosition(fighter, opponent) {
     return;
   }
 
-  if (fighter.isJumping() && !opponent.isJumping() || opponent.isJumping() && !fighter.isJumping()) {
-    setFightersOrientation(fighter, opponent);
+  if (!fighter.isJumping() && !fighter.isJumpingAttack()) {
+    setFighterOrientation(fighter, opponent);
+  }
+
+  if (!fighter.isJumping() && opponent.isJumping() || fighter.isJumping() && !opponent.isJumping()) {
     return;
   }
+
+  if (!fighter.isMoving()) return;
 
   const haveXCollision = Math.abs(opponent.x - fighter.x) < (opponent.width + fighter.width) / 2;
-  if (!haveXCollision) return;
+  const opponentCentralY = opponent.y - opponent.height / 2;
+  const fighterCentralY = fighter.y - fighter.height / 2;
+  const haveYCollision = Math.abs(opponentCentralY - fighterCentralY) < (opponent.height + fighter.height) / 2;
+  if (!haveXCollision || !haveYCollision) return;
 
-  if (!fighter.isMoving() && opponent.isMoving()) return;
-
-  if (fighter.isMoving() && !opponent.isMoving() && fighter.orientation === ORIENTATIONS.LEFT) {
-    fighter.x = opponent.x - (opponent.width + fighter.width) / 2;
-    return;
-  }
-
-  if (fighter.isMoving() && !opponent.isMoving() && fighter.orientation === ORIENTATIONS.RIGHT) {
-    fighter.x = opponent.x + (opponent.width + fighter.width) / 2;
+  if (!opponent.isMoving()) {
+    fighter.x = fighter.orientation === ORIENTATIONS.LEFT ?
+      opponent.x - (opponent.width + fighter.width) / 2 :
+      opponent.x + (opponent.width + fighter.width) / 2;
     return;
   }
 
@@ -40,22 +43,16 @@ function recalculateFighterPosition(fighter, opponent) {
   if (fighter.orientation === ORIENTATIONS.LEFT) {
     fighter.x -= collisionWidth / 2;
     opponent.x += collisionWidth / 2;
-    return;
-  }
-
-  if (fighter.orientation === ORIENTATIONS.LEFT) {
+  } else {
     fighter.x += collisionWidth / 2;
     opponent.x -= collisionWidth / 2;
-    return;
   }
 }
 
-function setFightersOrientation(fighter, opponent) {
+function setFighterOrientation(fighter, opponent) {
   if (fighter.x < opponent.x) {
     fighter.orientation = ORIENTATIONS.LEFT;
-    opponent.orientation = ORIENTATIONS.RIGHT;
   } else {
     fighter.orientation = ORIENTATIONS.RIGHT;
-    opponent.orientation = ORIENTATIONS.LEFT;
   }
 }
